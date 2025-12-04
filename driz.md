@@ -1,0 +1,1 @@
+ rm -rf drizzle/* && npx drizzle-kit generate
