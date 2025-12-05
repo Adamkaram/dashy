@@ -1,0 +1,344 @@
+# Multi-Tenancy System Implementation Plan
+
+## Overview
+Implement a complete multi-tenancy system where each tenant can have their own theme, and the system automatically detects the tenant based on domain/subdomain and loads the appropriate theme.
+
+## Phase 1: Tenant Context Provider ✅
+
+### 1.1 Create TenantProvider
+**File:** `lib/tenant/TenantProvider.tsx`
+
+```tsx
+'use client';
+
+interface TenantData {
+  id: string;
+  name: string;
+  slug: string;
+  domain?: string;
+  subdomain?: string;
+  activeTheme: string;
+  settings: any;
+}
+
+export function TenantProvider({ children }) {
+  const [tenant, setTenant] = useState<TenantData | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    loadTenant();
+  }, []);
+  
+  return (
+    <TenantContext.Provider value={{ tenant, loading }}>
+      {children}
+    </TenantContext.Provider>
+  );
+}
+```
+
+**Features:**
+- Auto-detect tenant from hostname
+- Load tenant data from API
+- Provide tenant context to entire app
+
+---
+
+## Phase 2: API Endpoints ✅
+
+### 2.1 GET /api/tenant
+**File:** `app/api/tenant/route.ts`
+
+**Purpose:** Get tenant by hostname/subdomain
+
+**Logic:**
+```typescript
+1. Extract hostname from request
+2. Query tenants table by domain OR subdomain
+3. Return tenant data including activeTheme
+4. Fallback to 'default' tenant if not found
+```
+
+### 2.2 POST /api/themes/activate
+**File:** `app/api/themes/activate/route.ts`
+
+**Purpose:** Activate a theme for a tenant
+
+**Request Body:**
+```json
+{
+  "themeId": "uuid",
+  "tenantId": "uuid"
+}
+```
+
+**Logic:**
+```typescript
+1. Deactivate all themes for this tenant
+2. Activate the selected theme
+3. Update tenant's activeTheme field
+4. Return success
+```
+
+---
+
+## Phase 3: Update ThemeComponentProvider ✅
+
+**File:** `lib/theme/ThemeComponentProvider.tsx`
+
+**Changes:**
+```tsx
+export function ThemeComponentProvider({ children }) {
+  const { tenant, loading: tenantLoading } = useTenant();
+  const [components, setComponents] = useState(null);
+  
+  useEffect(() => {
+    if (tenant) {
+      // Load theme based on tenant.activeTheme
+      const theme = THEME_REGISTRY[tenant.activeTheme || 'default'];
+      setComponents(theme.components);
+    }
+  }, [tenant]);
+  
+  // Show loading while tenant is loading
+  if (tenantLoading || !components) {
+    return <LoadingScreen />;
+  }
+  
+  return (
+    <ThemeComponentContext.Provider value={{ components, themeName: tenant.activeTheme }}>
+      {children}
+    </ThemeComponentContext.Provider>
+  );
+}
+```
+
+---
+
+## Phase 4: Update ClientBody.tsx ✅
+
+**File:** `app/ClientBody.tsx`
+
+**Correct Provider Hierarchy:**
+```tsx
+<body>
+  <TenantProvider>           {/* 1. Load tenant first */}
+    <ThemeComponentProvider> {/* 2. Load theme based on tenant */}
+      <TooltipProvider>
+        {children}
+        <Toaster />
+      </TooltipProvider>
+    </ThemeComponentProvider>
+  </TenantProvider>
+</body>
+```
+
+---
+
+## Phase 5: Middleware for Tenant Detection ✅
+
+**File:** `middleware.ts`
+
+**Purpose:** Detect tenant from domain/subdomain and add to request headers
+
+```typescript
+export function middleware(request: NextRequest) {
+  const hostname = request.headers.get('host') || '';
+  
+  // Extract subdomain
+  const subdomain = hostname.split('.')[0];
+  
+  // Add tenant info to headers
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-tenant-subdomain', subdomain);
+  
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+}
+
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};
+```
+
+---
+
+## Phase 6: Admin Theme Management UI ✅
+
+### 6.1 Update Themes Admin Page
+**File:** `app/admin/themes/page.tsx`
+
+**Add "Activate" Button:**
+```tsx
+{themes.map(theme => (
+  <div key={theme.id}>
+    <h3>{theme.displayName}</h3>
+    <div className="flex gap-2">
+      <button onClick={() => handlePreview(theme)}>
+        معاينة
+      </button>
+      <button 
+        onClick={() => handleActivate(theme.id)}
+        disabled={theme.isActive}
+      >
+        {theme.isActive ? 'مفعّل' : 'استخدام'}
+      </button>
+    </div>
+  </div>
+))}
+```
+
+**Activate Handler:**
+```tsx
+const handleActivate = async (themeId: string) => {
+  const res = await fetch('/api/themes/activate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ themeId, tenantId: currentTenant.id })
+  });
+  
+  if (res.ok) {
+    toast.success('تم تفعيل الثيم بنجاح');
+    // Reload page to apply new theme
+    window.location.reload();
+  }
+};
+```
+
+---
+
+## Phase 7: Create New Test Theme ✅
+
+### 7.1 Create "Elegant" Theme
+**Directory:** `components/themes/elegant/`
+
+**Components:**
+- `Header.tsx` - Elegant header with serif fonts
+- `Hero.tsx` - Minimal hero with large typography
+- `CategoryCard.tsx` - Card with elegant borders
+- `ServiceCard.tsx` - Sophisticated service card
+- `Footer.tsx` - Clean footer
+- `Layout.tsx` - Elegant layout wrapper
+
+**Theme Config:**
+```typescript
+export const ElegantTheme: Theme = {
+  name: 'elegant',
+  displayName: 'Elegant Theme',
+  description: 'ثيم أنيق بخطوط serif وتصميم راقي',
+  version: '1.0.0',
+  components: { ... },
+  config: {
+    colors: {
+      primary: '#2C3E50',
+      secondary: '#BDC3C7',
+      accent: '#E74C3C',
+    },
+    fonts: {
+      heading: 'Playfair Display',
+      body: 'Lora',
+    }
+  }
+};
+```
+
+### 7.2 Register Theme
+**File:** `components/themes/registry.ts`
+
+```typescript
+import { ElegantTheme } from './elegant';
+
+export const THEME_REGISTRY: ThemeRegistry = {
+  'default': DefaultTheme,
+  'modern-minimal': ModernMinimalTheme,
+  'elegant': ElegantTheme, // ✅ New theme
+};
+```
+
+### 7.3 Add to Database
+```sql
+INSERT INTO themes (tenant_id, name, display_name, description, is_active)
+VALUES (
+  (SELECT id FROM tenants WHERE slug = 'default'),
+  'elegant',
+  'Elegant Theme',
+  'ثيم أنيق بخطوط serif وتصميم راقي',
+  false
+);
+```
+
+---
+
+## Testing Flow
+
+### Test Scenario 1: Theme Activation
+1. Go to `/admin/themes`
+2. See list of themes (default, modern-minimal, elegant)
+3. Click "استخدام" on "Elegant" theme
+4. System deactivates current theme
+5. System activates elegant theme
+6. Page reloads
+7. All components now use Elegant theme
+
+### Test Scenario 2: Multi-Tenant
+1. Create second tenant: `tenant2`
+2. Set subdomain: `tenant2.localhost`
+3. Activate different theme for tenant2
+4. Visit `tenant2.localhost:3000`
+5. See tenant2's theme
+6. Visit `localhost:3000`
+7. See default tenant's theme
+
+---
+
+## Database Schema Updates
+
+### Add activeTheme to tenants table
+```sql
+ALTER TABLE tenants 
+ADD COLUMN active_theme VARCHAR(100) DEFAULT 'default';
+
+-- Update existing tenants
+UPDATE tenants 
+SET active_theme = (
+  SELECT name FROM themes 
+  WHERE tenant_id = tenants.id 
+  AND is_active = true 
+  LIMIT 1
+);
+```
+
+---
+
+## Files to Create/Modify
+
+### New Files
+- ✅ `lib/tenant/TenantProvider.tsx`
+- ✅ `lib/tenant/index.ts`
+- ✅ `app/api/tenant/route.ts`
+- ✅ `app/api/themes/activate/route.ts`
+- ✅ `middleware.ts`
+- ✅ `components/themes/elegant/` (entire directory)
+
+### Modified Files
+- ✅ `lib/theme/ThemeComponentProvider.tsx`
+- ✅ `app/ClientBody.tsx`
+- ✅ `app/admin/themes/page.tsx`
+- ✅ `components/themes/registry.ts`
+- ✅ `db/schema.ts` (add activeTheme column)
+
+---
+
+## Success Criteria
+
+- [x] TenantProvider loads tenant from API
+- [x] ThemeComponentProvider uses tenant's activeTheme
+- [x] Middleware detects tenant from subdomain
+- [x] Admin UI shows "استخدام" button
+- [x] Clicking "استخدام" activates theme
+- [x] Page reload shows new theme
+- [x] New "Elegant" theme works correctly
+- [x] Multi-tenant setup works with different subdomains

@@ -27,62 +27,122 @@
    font-display: swap;
  }
 
+
+ /* === Theme Variables System === */
+
+ /* 1. Default Theme (Sarainah) */
  :root {
-   /* === 6-Color System === */
-   /* Primary Colors */
+   /* Legacy Colors */
    --color-cream-light: #ECE8DB;
-   /* Lightest beige - backgrounds */
    --color-beige: #F0EBE5;
-   /* Light beige - secondary backgrounds */
    --color-brown-gold: #8F6B43;
-   /* Brown-gold - interactive elements, buttons */
    --color-burgundy: #53131C;
-   /* Dark red/burgundy - headings, emphasis */
    --color-gray-dark: #46423D;
-   /* Dark gray - primary text */
    --color-black: #363533;
-   /* Near-black - secondary text */
 
-   /* Semantic Aliases for Easy Use */
-   --background: var(--color-beige);
-   --foreground: var(--color-gray-dark);
-   --primary: var(--color-burgundy);
-   --secondary: var(--color-brown-gold);
-   --text-primary: var(--color-gray-dark);
-   --text-secondary: var(--color-black);
+   /* Legacy Aliases */
+   --main-color: var(--color-burgundy);
+   --secondary-color: var(--color-brown-gold);
+   --dark-brown: var(--color-gray-dark);
+   --accent-rose: #d1a58d;
 
-   /* Fonts */
-   --font-family-ar: 'Ithra', 'Almarai', sans-serif;
-   --font-family-en: 'Ithra', 'Almarai', sans-serif;
+   /* Tailwind Variables (HSL Channels) */
+   --background: 34 24% 92%;
+   /* #F0EBE5 */
+   --foreground: 45 7% 26%;
+   /* #46423D */
+   --card: 34 24% 92%;
+   --card-foreground: 45 7% 26%;
+   --popover: 34 24% 92%;
+   --popover-foreground: 45 7% 26%;
+   --primary: 351 63% 20%;
+   /* #53131C */
+   --primary-foreground: 0 0% 98%;
+   --secondary: 32 36% 41%;
+   /* #8F6B43 */
+   --secondary-foreground: 0 0% 98%;
+   --muted: 44 26% 89%;
+   /* #ECE8DB */
+   --muted-foreground: 45 7% 36%;
+   --accent: 32 36% 41%;
+   --accent-foreground: 0 0% 98%;
+   --destructive: 0 84.2% 60.2%;
+   --destructive-foreground: 0 0% 98%;
+   --border: 32 36% 41%;
+   --input: 32 36% 41%;
+   --ring: 351 63% 20%;
+   --radius: 0.5rem;
 
-   /* Transitions & Effects */
-   --trans: all 0.4s ease-in-out;
-   --trans-fast: all 0.2s ease-in-out;
-   --trans-slow: all 0.6s ease-in-out;
+   --chart-1: 12 76% 61%;
+   --chart-2: 173 58% 39%;
+   --chart-3: 197 37% 24%;
+   --chart-4: 43 74% 66%;
+   --chart-5: 27 87% 67%;
+ }
 
-   /* Shadows - Elegant & Soft */
-   --shadow-sm: 0 2px 8px rgba(180, 120, 108, 0.08);
-   --shadow-md: 0 4px 16px rgba(180, 120, 108, 0.12);
-   --shadow-lg: 0 8px 24px rgba(180, 120, 108, 0.16);
-   --shadow-hover: 0 12px 32px rgba(180, 120, 108, 0.2);
+ /* 2. Urban Vogue Theme */
+ [data-theme="urban-vogue"] {
+   /* Legacy Aliases Mapped to Theme */
+   --main-color: #000000;
+   --secondary-color: #FFFFFF;
+   --dark-brown: #333333;
+   --accent-rose: #666666;
 
-   /* Border Radius */
-   --radius-sm: 8px;
-   --radius-md: 12px;
-   --radius-lg: 16px;
-   --radius-xl: 24px;
+   /* Tailwind Variables */
+   --background: 0 0% 100%;
+   --foreground: 240 10% 3.9%;
+   --card: 0 0% 100%;
+   --card-foreground: 240 10% 3.9%;
+   --popover: 0 0% 100%;
+   --popover-foreground: 240 10% 3.9%;
+   --primary: 240 5.9% 10%;
+   --primary-foreground: 0 0% 98%;
+   --secondary: 240 4.8% 95.9%;
+   --secondary-foreground: 240 5.9% 10%;
+   --muted: 240 4.8% 95.9%;
+   --muted-foreground: 240 3.8% 46.1%;
+   --accent: 240 4.8% 95.9%;
+   --accent-foreground: 240 5.9% 10%;
+   --destructive: 0 84.2% 60.2%;
+   --destructive-foreground: 0 0% 98%;
+   --border: 240 5.9% 90%;
+   --input: 240 5.9% 90%;
+   --ring: 240 5.9% 10%;
+   --radius: 0.5rem;
+ }
 
-   /* Spacing */
-   --spacing-xs: 0.5rem;
-   --spacing-sm: 1rem;
-   --spacing-md: 1.5rem;
-   --spacing-lg: 2rem;
-   --spacing-xl: 3rem;
+ .dark {
+   --background: 240 10% 3.9%;
+   --foreground: 0 0% 98%;
+   --card: 240 10% 3.9%;
+   --card-foreground: 0 0% 98%;
+   --popover: 240 10% 3.9%;
+   --popover-foreground: 0 0% 98%;
+   --primary: 0 0% 98%;
+   --primary-foreground: 240 5.9% 10%;
+   --secondary: 240 3.7% 15.9%;
+   --secondary-foreground: 0 0% 98%;
+   --muted: 240 3.7% 15.9%;
+   --muted-foreground: 240 5% 64.9%;
+   --accent: 240 3.7% 15.9%;
+   --accent-foreground: 0 0% 98%;
+   --destructive: 0 62.8% 30.6%;
+   --destructive-foreground: 0 0% 98%;
+   --border: 240 3.7% 15.9%;
+   --input: 240 3.7% 15.9%;
+   --ring: 240 4.9% 83.9%;
+   --chart-1: 220 70% 50%;
+   --chart-2: 160 60% 45%;
+   --chart-3: 30 80% 55%;
+   --chart-4: 280 65% 60%;
+   --chart-5: 340 75% 55%;
  }
 
  @theme inline {
    --color-background: var(--background);
    --color-foreground: var(--foreground);
+   --color-primary: var(--primary);
+   --color-secondary: var(--secondary);
    --font-sans: var(--font-geist-sans);
    --font-mono: var(--font-geist-mono);
  }
@@ -97,8 +157,8 @@
  }
 
  body {
-   background: var(--background);
-   color: var(--foreground);
+   background: hsl(var(--background));
+   color: hsl(var(--foreground));
    font-family: var(--font-family-ar), sans-serif;
    overflow-x: hidden;
  }
@@ -124,7 +184,7 @@
 
  /* Card Styles */
  .card {
-   background: var(--background);
+   background: hsl(var(--background));
    border-radius: var(--radius-lg);
    box-shadow: var(--shadow-md);
    transition: var(--trans);

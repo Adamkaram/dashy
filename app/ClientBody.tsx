@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { TooltipProvider } from "@/components/ui/Tooltip";
 import { Toaster } from "sonner";
 import { TenantProvider } from "@/lib/tenant";
@@ -20,25 +20,27 @@ export default function ClientBody({
   return (
     <body suppressHydrationWarning className="antialiased">
       <TenantProvider>
-        <ThemeComponentProvider>
-          <TooltipProvider>
-            {children}
-            <Toaster
-              richColors
-              position="top-center"
-              closeButton
-              className="pointer-events-auto"
-              toastOptions={{
-                style: {
-                  background: 'transparent',
-                  border: 'none',
-                  boxShadow: 'none',
-                },
-                className: 'custom-toast',
-              }}
-            />
-          </TooltipProvider>
-        </ThemeComponentProvider>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#F5EBE9]"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8F6B43]"></div></div>}>
+          <ThemeComponentProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster
+                richColors
+                position="top-center"
+                closeButton
+                className="pointer-events-auto"
+                toastOptions={{
+                  style: {
+                    background: 'transparent',
+                    border: 'none',
+                    boxShadow: 'none',
+                  },
+                  className: 'custom-toast',
+                }}
+              />
+            </TooltipProvider>
+          </ThemeComponentProvider>
+        </Suspense>
       </TenantProvider>
     </body>
   );

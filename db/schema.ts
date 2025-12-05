@@ -166,6 +166,8 @@ export const products = pgTable("products", {
   description: text("description"),
   image: text("image"),
   basePrice: integer("base_price").default(0).notNull(),
+  salePrice: integer("sale_price").default(0),
+  badge: text("badge"),
   isActive: boolean("is_active").default(true).notNull(),
   providerName: text("provider_name").default("My Moments"),
   providerLogo: text("provider_logo"),

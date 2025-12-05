@@ -1,79 +1,136 @@
 'use client';
 
-import { FooterProps } from '@/lib/theme/component-types';
-import { Container } from '@/components/ui-library';
 import Link from 'next/link';
-import { Instagram, Twitter, Facebook } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { FooterProps } from '@/lib/theme/component-types';
 
 export default function ModernFooter({ tenant }: FooterProps) {
-    const currentYear = new Date().getFullYear();
-
     return (
-        <footer className="bg-white border-t border-gray-100 pt-16 pb-8">
-            <Container maxWidth="xl">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                    {/* Brand */}
-                    <div className="col-span-1 md:col-span-1">
-                        <Link href="/" className="text-3xl font-bold tracking-tighter text-black mb-6 block">
-                            {tenant?.name || 'MODERN.'}
-                        </Link>
-                        <p className="text-gray-500 text-sm leading-relaxed">
-                            تصميم عصري وبسيط يركز على المحتوى والمساحات البيضاء. نقدم تجربة مستخدم فريدة وسلسة.
-                        </p>
-                    </div>
-
-                    {/* Links Column 1 */}
-                    <div>
-                        <h4 className="font-bold text-black mb-6">الشركة</h4>
-                        <ul className="space-y-4 text-sm text-gray-600">
-                            <li><Link href="/about" className="hover:text-black transition-colors">من نحن</Link></li>
-                            <li><Link href="/careers" className="hover:text-black transition-colors">وظائف</Link></li>
-                            <li><Link href="/press" className="hover:text-black transition-colors">الصحافة</Link></li>
-                            <li><Link href="/contact" className="hover:text-black transition-colors">اتصل بنا</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Links Column 2 */}
-                    <div>
-                        <h4 className="font-bold text-black mb-6">المساعدة</h4>
-                        <ul className="space-y-4 text-sm text-gray-600">
-                            <li><Link href="/faq" className="hover:text-black transition-colors">الأسئلة الشائعة</Link></li>
-                            <li><Link href="/shipping" className="hover:text-black transition-colors">الشحن والتوصيل</Link></li>
-                            <li><Link href="/returns" className="hover:text-black transition-colors">الإرجاع والاستبدال</Link></li>
-                            <li><Link href="/privacy" className="hover:text-black transition-colors">سياسة الخصوصية</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Newsletter */}
-                    <div>
-                        <h4 className="font-bold text-black mb-6">النشرة البريدية</h4>
-                        <p className="text-sm text-gray-500 mb-4">اشترك للحصول على آخر الأخبار والعروض.</p>
-                        <form className="flex gap-2">
+        <footer className="bg-gray-50 border-t border-gray-200">
+            {/* Newsletter Section */}
+            <div className="bg-black text-white py-12">
+                <div className="container mx-auto px-4">
+                    <div className="max-w-2xl mx-auto text-center">
+                        <h3 className="text-2xl font-bold mb-2">اشترك في النشرة البريدية</h3>
+                        <p className="text-gray-400 mb-6">احصل على آخر العروض والمنتجات الجديدة</p>
+                        <div className="flex gap-2 max-w-md mx-auto">
                             <input
                                 type="email"
                                 placeholder="بريدك الإلكتروني"
-                                className="flex-1 bg-gray-50 border border-gray-200 px-4 py-2 text-sm focus:outline-none focus:border-black transition-colors"
+                                className="flex-1 px-4 py-3 rounded-full text-black focus:outline-none"
                             />
-                            <button className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors">
-                                اشتراك
+                            <button className="bg-white text-black px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors">
+                                اشترك
                             </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Bottom Bar */}
-                <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-xs text-gray-400">
-                        © {currentYear} {tenant?.name || 'Modern Minimal'}. جميع الحقوق محفوظة.
-                    </p>
+            {/* Main Footer */}
+            <div className="container mx-auto px-4 py-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {/* About */}
+                    <div>
+                        <h4 className="font-bold text-lg mb-4">{tenant?.name || 'المتجر'}</h4>
+                        <p className="text-gray-600 text-sm mb-4">
+                            متجرك الموثوق للتسوق الإلكتروني. نوفر أفضل المنتجات بأسعار تنافسية مع خدمة عملاء متميزة.
+                        </p>
+                        <div className="flex gap-3">
+                            <Link href="#" className="bg-gray-200 hover:bg-gray-300 p-2 rounded-full transition-colors">
+                                <Facebook className="w-5 h-5" />
+                            </Link>
+                            <Link href="#" className="bg-gray-200 hover:bg-gray-300 p-2 rounded-full transition-colors">
+                                <Instagram className="w-5 h-5" />
+                            </Link>
+                            <Link href="#" className="bg-gray-200 hover:bg-gray-300 p-2 rounded-full transition-colors">
+                                <Twitter className="w-5 h-5" />
+                            </Link>
+                        </div>
+                    </div>
 
-                    <div className="flex gap-6">
-                        <a href="#" className="text-gray-400 hover:text-black transition-colors"><Instagram className="w-5 h-5" /></a>
-                        <a href="#" className="text-gray-400 hover:text-black transition-colors"><Twitter className="w-5 h-5" /></a>
-                        <a href="#" className="text-gray-400 hover:text-black transition-colors"><Facebook className="w-5 h-5" /></a>
+                    {/* Shop */}
+                    <div>
+                        <h4 className="font-bold text-lg mb-4">تسوق</h4>
+                        <ul className="space-y-2 text-sm">
+                            <li><Link href="/new-arrivals" className="text-gray-600 hover:text-black">وصل حديثاً</Link></li>
+                            <li><Link href="/best-sellers" className="text-gray-600 hover:text-black">الأكثر مبيعاً</Link></li>
+                            <li><Link href="/deals" className="text-gray-600 hover:text-black">العروض الخاصة</Link></li>
+                            <li><Link href="/categories" className="text-gray-600 hover:text-black">جميع الفئات</Link></li>
+                            <li><Link href="/gift-cards" className="text-gray-600 hover:text-black">بطاقات الهدايا</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Customer Service */}
+                    <div>
+                        <h4 className="font-bold text-lg mb-4">خدمة العملاء</h4>
+                        <ul className="space-y-2 text-sm">
+                            <li><Link href="/contact" className="text-gray-600 hover:text-black">اتصل بنا</Link></li>
+                            <li><Link href="/shipping" className="text-gray-600 hover:text-black">الشحن والتوصيل</Link></li>
+                            <li><Link href="/returns" className="text-gray-600 hover:text-black">الإرجاع والاستبدال</Link></li>
+                            <li><Link href="/track-order" className="text-gray-600 hover:text-black">تتبع الطلب</Link></li>
+                            <li><Link href="/faq" className="text-gray-600 hover:text-black">الأسئلة الشائعة</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Contact Info */}
+                    <div>
+                        <h4 className="font-bold text-lg mb-4">تواصل معنا</h4>
+                        <ul className="space-y-3 text-sm">
+                            <li className="flex items-start gap-2 text-gray-600">
+                                <Phone className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <p className="font-medium text-black">الهاتف</p>
+                                    <p>+966 50 123 4567</p>
+                                </div>
+                            </li>
+                            <li className="flex items-start gap-2 text-gray-600">
+                                <Mail className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <p className="font-medium text-black">البريد</p>
+                                    <p>info@shop.com</p>
+                                </div>
+                            </li>
+                            <li className="flex items-start gap-2 text-gray-600">
+                                <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <p className="font-medium text-black">العنوان</p>
+                                    <p>الرياض، المملكة العربية السعودية</p>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </Container>
+            </div>
+
+            {/* Payment Methods & Bottom Bar */}
+            <div className="border-t border-gray-200">
+                <div className="container mx-auto px-4 py-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        {/* Payment Methods */}
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-gray-600">طرق الدفع:</span>
+                            <div className="flex gap-2">
+                                <div className="bg-white border border-gray-200 px-3 py-1 rounded text-xs font-medium">VISA</div>
+                                <div className="bg-white border border-gray-200 px-3 py-1 rounded text-xs font-medium">Mastercard</div>
+                                <div className="bg-white border border-gray-200 px-3 py-1 rounded text-xs font-medium">MADA</div>
+                                <div className="bg-white border border-gray-200 px-3 py-1 rounded text-xs font-medium">Apple Pay</div>
+                            </div>
+                        </div>
+
+                        {/* Copyright */}
+                        <div className="text-sm text-gray-600">
+                            © 2024 {tenant?.name || 'المتجر'}. جميع الحقوق محفوظة.
+                        </div>
+
+                        {/* Legal Links */}
+                        <div className="flex gap-4 text-sm">
+                            <Link href="/privacy" className="text-gray-600 hover:text-black">سياسة الخصوصية</Link>
+                            <Link href="/terms" className="text-gray-600 hover:text-black">الشروط والأحكام</Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </footer>
     );
 }

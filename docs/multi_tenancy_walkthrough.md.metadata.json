@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary": "Complete walkthrough of the Multi-Tenancy system implementation, showing how tenants can switch themes, how the system detects tenants, and how to test the functionality with screenshots and examples.",
+  "updatedAt": "2025-12-04T18:35:01.140447513Z"
+}

@@ -9,6 +9,7 @@ export interface TenantData {
     domain?: string | null;
     subdomain?: string | null;
     activeTheme: string;
+    activeThemeConfig?: any;
     plan?: string;
     status?: string;
     settings?: any;

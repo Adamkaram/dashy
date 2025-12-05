@@ -84,8 +84,8 @@ export default function ThemesPage() {
         }
     };
 
-    // Find the active theme object based on tenant's activeTheme name
-    const activeTheme = themes.find(t => t.name === tenant?.activeTheme);
+    // Find the active theme object based on tenant's activeTheme slug
+    const activeTheme = themes.find(t => t.slug === tenant?.activeTheme);
 
     if (loading) {
         return (
@@ -151,29 +151,53 @@ export default function ThemesPage() {
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
                                         <h3 className="text-2xl font-bold text-gray-900">{activeTheme.name}</h3>
-                                        <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md font-mono">v1.0.0</span>
+                                        <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md font-mono">v{activeTheme.config?.version || '1.0.0'}</span>
                                     </div>
 
                                     <p className="text-gray-600 mb-6 leading-relaxed">
-                                        {activeTheme.description || 'ثيم احترافي مصمم خصيصاً لتلبية احتياجات متجرك، مع دعم كامل للغة العربية وتصميم متجاوب مع جميع الأجهزة.'}
+                                        {activeTheme.description || 'ثيم احترافي مصمم خصيصاً لتلبية احتياجات متجرك.'}
                                     </p>
 
-                                    <div className="grid grid-cols-2 gap-4 mb-8">
-                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
-                                            <Layout className="w-4 h-4 text-primary" />
-                                            <span>تخطيط متجاوب</span>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                                        {/* Colors */}
+                                        <div className="bg-gray-50 p-3 rounded-lg">
+                                            <div className="flex items-center gap-2 mb-2 text-sm text-gray-700 font-medium">
+                                                <Palette className="w-4 h-4 text-primary" />
+                                                <span>الألوان الرئيسية</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {activeTheme.config?.colors && Object.entries(activeTheme.config.colors).map(([key, color]: [string, any]) => (
+                                                    <div key={key} className="flex flex-col items-center gap-1">
+                                                        <div
+                                                            className="w-8 h-8 rounded-full border border-gray-200 shadow-sm"
+                                                            style={{ backgroundColor: color }}
+                                                            title={`${key}: ${color}`}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
-                                            <Type className="w-4 h-4 text-primary" />
-                                            <span>خطوط عربية</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
-                                            <Palette className="w-4 h-4 text-primary" />
-                                            <span>ألوان مخصصة</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
-                                            <Sparkles className="w-4 h-4 text-primary" />
-                                            <span>تأثيرات بصرية</span>
+
+                                        {/* Fonts */}
+                                        <div className="bg-gray-50 p-3 rounded-lg">
+                                            <div className="flex items-center gap-2 mb-2 text-sm text-gray-700 font-medium">
+                                                <Type className="w-4 h-4 text-primary" />
+                                                <span>الخطوط المستخدمة</span>
+                                            </div>
+                                            <div className="text-sm text-gray-600 space-y-1">
+                                                {activeTheme.config?.fonts?.heading && (
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-500">العناوين:</span>
+                                                        <span className="font-medium">{activeTheme.config.fonts.heading}</span>
+                                                    </div>
+                                                )}
+                                                {activeTheme.config?.fonts?.body && (
+                                                    <div className="flex justify-between">
+                                                        <span className="text-gray-500">النصوص:</span>
+                                                        <span className="font-medium">{activeTheme.config.fonts.body}</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -189,9 +213,9 @@ export default function ThemesPage() {
                                     <Button
                                         variant="secondary"
                                         className="flex-1 md:flex-none"
-                                        disabled
+                                        onClick={() => window.location.href = `/admin/themes/customize?id=${activeTheme.id}`}
                                     >
-                                        إعدادات الثيم
+                                        تخصيص الثيم
                                     </Button>
                                 </div>
                             </div>
@@ -204,7 +228,7 @@ export default function ThemesPage() {
                     <h2 className="text-lg font-semibold mb-4 text-gray-900">مكتبة الثيمات</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {themes.map((theme) => {
-                            const isCurrentlyActive = theme.name === tenant?.activeTheme;
+                            const isCurrentlyActive = theme.slug === tenant?.activeTheme;
                             const isActivatingThis = activating === theme.id;
 
                             // Skip if not active in system (unless it's the currently active one for this tenant)
@@ -288,16 +312,18 @@ export default function ThemesPage() {
                                                                 جاري التفعيل...
                                                             </>
                                                         ) : (
-                                                            'استخدام'
+                                                            'تطبيق'
                                                         )}
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
                                                         className="px-2"
-                                                        title="معاينة"
+                                                        title="معاينة وتخصيص"
+                                                        onClick={() => window.location.href = `/admin/themes/customize?id=${theme.id}`}
                                                     >
                                                         <MousePointerClick className="w-4 h-4" />
+                                                        <span className="mr-2">معاينة</span>
                                                     </Button>
                                                 </>
                                             )}

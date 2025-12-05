@@ -24,6 +24,8 @@ export interface HeroSlide {
     image: string;
     title: string;
     subtitle?: string;
+    buttonText?: string;
+    buttonLink?: string;
     cta?: {
         text: string;
         href: string;
@@ -76,6 +78,10 @@ export interface ThemeComponents {
     CategoryCard: ComponentType<CategoryCardProps>;
     Footer: ComponentType<FooterProps>;
     Layout: ComponentType<LayoutProps>;
+    Home?: ComponentType<any>;
+    Cart?: ComponentType<any>;
+    ProductDetails?: ComponentType<any>;
+    Shop?: ComponentType<any>;
 }
 
 // =====================================================

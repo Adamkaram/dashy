@@ -41,11 +41,14 @@ export async function GET(request: NextRequest) {
 
         // Get active theme if tenant has one
         let activeThemeName = 'default';
+        let activeThemeConfig = null;
+
         if (tenant.activeThemeId) {
             const activeTheme = await db.query.themes.findFirst({
                 where: (th, { eq }) => eq(th.id, tenant.activeThemeId!)
             });
-            activeThemeName = activeTheme?.name || 'default';
+            activeThemeName = activeTheme?.slug || 'default';
+            activeThemeConfig = activeTheme?.config || null;
         }
 
         // Return tenant data
@@ -56,6 +59,7 @@ export async function GET(request: NextRequest) {
             domain: tenant.domain,
             subdomain: tenant.subdomain,
             activeTheme: activeThemeName,
+            activeThemeConfig,
             plan: tenant.plan,
             status: tenant.status,
         });

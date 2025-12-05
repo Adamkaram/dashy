@@ -9,7 +9,7 @@ export default function Home() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { Hero, CategoryCard } = useThemeComponents();
+  const { Hero, CategoryCard, Home: ThemeHome } = useThemeComponents();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,6 +46,11 @@ export default function Home() {
     return <div className="min-h-screen flex items-center justify-center bg-[#F5EBE9]">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8F6B43]"></div>
     </div>;
+  }
+
+  // If the active theme has a custom Home page component, render it
+  if (ThemeHome) {
+    return <ThemeHome />;
   }
 
   return (

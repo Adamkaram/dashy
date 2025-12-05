@@ -1,17 +1,17 @@
 import type { Theme } from '@/lib/theme/component-types';
 import Header from './Header/Header';
 import Hero from './Hero/Hero';
-import ServiceCard from './ServiceCard/ServiceCard';
 import CategoryCard from './CategoryCard/CategoryCard';
 import Footer from './Footer/Footer';
+import ServiceCard from './ServiceCard/ServiceCard';
 import Layout from './Layout/Layout';
 import themeConfig from './theme.config';
 
 export const ModernMinimalTheme: Theme = {
     name: 'modern-minimal',
-    displayName: 'Modern Minimal',
-    description: 'تصميم عصري وبسيط يركز على المحتوى والمساحات البيضاء',
-    version: '1.0.0',
+    displayName: 'Modern Minimal - E-Commerce',
+    description: 'متجر إلكتروني متكامل بتصميم عصري',
+    version: '2.0.0',
 
     components: {
         Header,
