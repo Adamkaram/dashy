@@ -5,11 +5,6 @@
  */
 
 import type { ThemeRegistry } from '@/lib/theme/component-types';
-import { DefaultTheme } from './default';
-
-// Import themes (will be created)
-import { ModernMinimalTheme } from './modern-minimal';
-import { ElegantTheme } from './elegant';
 import { UrbanVogueTheme } from './urban-vogue';
 
 /**
@@ -17,9 +12,6 @@ import { UrbanVogueTheme } from './urban-vogue';
  * Add new themes here to make them available in the system
  */
 export const THEME_REGISTRY: ThemeRegistry = {
-    'default': DefaultTheme,
-    'modern-minimal': ModernMinimalTheme,
-    'elegant': ElegantTheme,
     'urban-vogue': UrbanVogueTheme,
 };
 
@@ -31,7 +23,7 @@ export function getTheme(themeName: string) {
 
     if (!theme) {
         console.warn(`Theme "${themeName}" not found, falling back to default`);
-        return THEME_REGISTRY['default'];
+        return THEME_REGISTRY['urban-vogue'];
     }
 
     return theme;

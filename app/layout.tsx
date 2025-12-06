@@ -7,14 +7,7 @@ export const metadata: Metadata = {
   description: 'خدمات تنسيق الفعاليات والمناسبات - Event Planning and Decoration Services',
 };
 
-import { Montserrat } from 'next/font/google';
 import LayoutWrapper from '@/components/LayoutWrapper';
-
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
-  display: 'swap',
-});
 
 export default function RootLayout({
   children,
@@ -22,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning className={montserrat.variable}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <ClientBody>
         <LayoutWrapper>
           {children}

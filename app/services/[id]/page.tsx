@@ -104,7 +104,7 @@ export default async function ServiceDetails({ params }: { params: Promise<{ id:
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="relative w-10 h-10 rounded-full overflow-hidden border border-gray-100 shadow-sm">
                                         <Image
-                                            src={service.provider_logo || 'https://wgbbwrstcsizaqmvykmh.supabase.co/storage/v1/object/public/moment-bucket/log02.png'}
+                                            src={service.provider_logo || '/placeholder-logo.png'}
                                             alt={service.provider_name || 'My Moments'}
                                             fill
                                             className="object-cover"

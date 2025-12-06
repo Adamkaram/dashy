@@ -9,7 +9,7 @@ export default function Home() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { Hero, CategoryCard, Home: ThemeHome } = useThemeComponents();
+  const { Hero, CategoryCard, Home: ThemeHome, Loading } = useThemeComponents();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,9 +43,17 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-[#F5EBE9]">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8F6B43]"></div>
-    </div>;
+    // Use theme-specific Loading component if available
+    if (Loading) {
+      return <Loading />;
+    }
+
+    // Fallback loading spinner
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
   // If the active theme has a custom Home page component, render it

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import type { Metadata } from 'next';
+import './admin.css'; // Admin-specific styles
 import Link from 'next/link';
 import {
     LayoutDashboard,

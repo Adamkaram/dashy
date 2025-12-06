@@ -1,5 +1,5 @@
-import CheckoutPage from '@/components/shared/Checkout/Checkout';
+import CheckoutResolver from '@/components/resolvers/CheckoutResolver';
 
-export default function CheckoutRoute() {
-    return <CheckoutPage />;
+export default function CheckoutPage() {
+    return <CheckoutResolver />;
 }

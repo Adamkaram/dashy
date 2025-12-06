@@ -3,14 +3,17 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShoppingBag, Search, Menu, X, User } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { HeaderProps } from '@/lib/theme/component-types';
+import { useCart } from '@/context/CartContext';
 
 export default function Header({ tenant }: HeaderProps) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const { getTotalItems } = useCart();
+    const cartItemsCount = getTotalItems();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -26,18 +29,18 @@ export default function Header({ tenant }: HeaderProps) {
             href: '/shop',
             hasDropdown: true,
             items: [
-                { name: 'وصل حديثاً', href: '/new-arrivals' },
-                { name: 'الأكثر مبيعاً', href: '/best-sellers' },
-                { name: 'العروض', href: '/sale' },
-                { name: 'المجموعات', href: '/collections' }
+                { name: 'وصل حديثاً', href: '/shop?sort=newest' },
+                { name: 'الأكثر مبيعاً', href: '/shop?sort=bestsellers' },
+                { name: 'العروض', href: '/shop?filter=sale' },
+                { name: 'المجموعات', href: '/shop?filter=collections' }
             ]
         },
         { name: 'عن العلامة', href: '/about', hasDropdown: false },
-        { name: 'المجموعات', href: '/collections', hasDropdown: false },
+        { name: 'المجموعات', href: '/shop', hasDropdown: false },
         { name: 'تواصل معنا', href: '/contact', hasDropdown: false },
     ];
 
-    const dropdownVariants = {
+    const dropdownVariants: Variants = {
         hidden: { opacity: 0, y: -10, height: 0, overflow: 'hidden' },
         visible: {
             opacity: 1,
@@ -65,8 +68,8 @@ export default function Header({ tenant }: HeaderProps) {
                     {/* Logo */}
                     <Link href="/" className="relative z-50">
                         <h1 className={cn(
-                            "text-2xl font-bold tracking-widest uppercase transition-colors",
-                            isScrolled ? "text-black" : "text-black" // Always black for this theme style usually, or white if hero is dark. Let's assume black for now based on reference.
+                            "text-2xl font-bold tracking-widest uppercase transition-colors font-montserrat",
+                            isScrolled ? "text-black" : "text-black"
                         )}>
                             {tenant?.name || 'URBAN VOGUE'}
                         </h1>
@@ -84,7 +87,7 @@ export default function Header({ tenant }: HeaderProps) {
                                 <Link
                                     href={link.href}
                                     className={cn(
-                                        "text-sm font-medium tracking-wide hover:text-gray-600 transition-colors uppercase",
+                                        "text-sm font-medium tracking-wide hover:text-gray-600 transition-colors uppercase font-montserrat",
                                         isScrolled ? "text-gray-900" : "text-gray-900"
                                     )}
                                 >
@@ -106,7 +109,7 @@ export default function Header({ tenant }: HeaderProps) {
                                                     <Link
                                                         key={item.name}
                                                         href={item.href}
-                                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors text-right"
+                                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors text-right font-montserrat"
                                                     >
                                                         {item.name}
                                                     </Link>
@@ -127,10 +130,14 @@ export default function Header({ tenant }: HeaderProps) {
                         <button className={cn("hover:text-gray-600 transition-colors", isScrolled ? "text-gray-900" : "text-gray-900")}>
                             <User className="w-5 h-5" />
                         </button>
-                        <button className={cn("relative hover:text-gray-600 transition-colors", isScrolled ? "text-gray-900" : "text-gray-900")}>
+                        <Link href="/cart" className={cn("relative hover:text-gray-600 transition-colors", isScrolled ? "text-gray-900" : "text-gray-900")}>
                             <ShoppingBag className="w-5 h-5" />
-                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-black text-white text-[10px] flex items-center justify-center rounded-full">0</span>
-                        </button>
+                            {cartItemsCount > 0 && (
+                                <span className="absolute -top-1 -right-1 w-4 h-4 bg-black text-white text-[10px] flex items-center justify-center rounded-full font-montserrat">
+                                    {cartItemsCount}
+                                </span>
+                            )}
+                        </Link>
 
                         {/* Mobile Menu Button */}
                         <button
@@ -158,7 +165,7 @@ export default function Header({ tenant }: HeaderProps) {
                                 <div key={link.name} className="border-b border-gray-100 pb-4">
                                     <Link
                                         href={link.href}
-                                        className="text-lg font-medium text-gray-900 uppercase tracking-wide block mb-2"
+                                        className="text-lg font-medium text-gray-900 uppercase tracking-wide block mb-2 font-montserrat"
                                         onClick={() => setMobileMenuOpen(false)}
                                     >
                                         {link.name}
@@ -169,7 +176,7 @@ export default function Header({ tenant }: HeaderProps) {
                                                 <Link
                                                     key={item.name}
                                                     href={item.href}
-                                                    className="text-sm text-gray-500"
+                                                    className="text-sm text-gray-500 font-montserrat"
                                                     onClick={() => setMobileMenuOpen(false)}
                                                 >
                                                     {item.name}

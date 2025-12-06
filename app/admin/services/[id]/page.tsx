@@ -50,7 +50,7 @@ export default function ServiceFormPage() {
         base_price: 0,
         is_active: true,
         provider_name: 'My Moments',
-        provider_logo: 'https://wgbbwrstcsizaqmvykmh.supabase.co/storage/v1/object/public/moment-bucket/log02.png',
+        provider_logo: '',
         policy: 'سياسة الحجز : يجب أن لا تقل مدة الحجز عن أسبوعين من تاريخ المناسبة.\n\nسياسة الإلغاء : يتم خصم 50 % من المبلغ الإجمالي في حال الإلغاء قبل موعد المناسبة ب 72 ساعة ، وأما في حال التأجيل يتم توفير كوبون مفتوح لمدة سنة .',
     });
     const [serviceImages, setServiceImages] = useState<string[]>([]);
@@ -107,7 +107,7 @@ export default function ServiceFormPage() {
                     base_price: data.base_price || 0,
                     is_active: data.is_active ?? true,
                     provider_name: data.provider_name || 'My Moments',
-                    provider_logo: data.provider_logo || 'https://wgbbwrstcsizaqmvykmh.supabase.co/storage/v1/object/public/moment-bucket/log02.png',
+                    provider_logo: data.provider_logo || '',
                     policy: data.policy || 'سياسة الحجز : يجب أن لا تقل مدة الحجز عن أسبوعين من تاريخ المناسبة.\n\nسياسة الإلغاء : يتم خصم 50 % من المبلغ الإجمالي في حال الإلغاء قبل موعد المناسبة ب 72 ساعة ، وأما في حال التأجيل يتم توفير كوبون مفتوح لمدة سنة .',
                 });
 

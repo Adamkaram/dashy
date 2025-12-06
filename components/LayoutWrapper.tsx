@@ -9,18 +9,25 @@ export default function LayoutWrapper({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
-    const { Header, Footer } = useThemeComponents();
+    const { Layout } = useThemeComponents();
 
     // Check if the current path is an admin route or login page
     const isDashboard = pathname?.startsWith('/admin') || pathname?.startsWith('/login');
 
-    return (
-        <>
-            {!isDashboard && <Header />}
-            <main className={`min-h-screen ${!isDashboard ? '' : 'bg-gray-100'}`} style={!isDashboard ? { backgroundColor: '#F0EBE5' } : {}}>
+    // For dashboard, render without theme layout
+    if (isDashboard) {
+        return (
+            <main className="min-h-screen bg-gray-100">
                 {children}
             </main>
-            {!isDashboard && <Footer />}
-        </>
-    );
+        );
+    }
+
+    // For storefront, use theme's Layout component
+    if (Layout) {
+        return <Layout>{children}</Layout>;
+    }
+
+    // Fallback if no theme layout
+    return <main className="min-h-screen">{children}</main>;
 }

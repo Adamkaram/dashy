@@ -5,16 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { SlidersHorizontal } from "lucide-react";
+import Loading from "../Loading/Loading";
 
 interface Product {
     id: string;
-    title: string;
-    basePrice: number;
-    salePrice?: number | null;
-    category: { name: string; slug: string };
-    image: string;
-    badge?: string | null;
     slug: string;
+    name: string;
+    price: number;
+    category: string;
+    image: string;
+    badge?: string;
+    salePrice?: number;
 }
 
 const categories = ["All", "Jeans", "Jackets", "Quarter Zips", "Crewnecks"];
@@ -27,37 +28,45 @@ const priceRanges = [
 ];
 
 export default function Shop() {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedPriceRange, setSelectedPriceRange] = useState(0);
     const [showFilters, setShowFilters] = useState(false);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch products for Urban Vogue tenant
         async function fetchProducts() {
             try {
-                const res = await fetch('/api/store/products?slug=urban-vogue');
-                if (res.ok) {
-                    const data = await res.json();
-                    setProducts(data);
-                }
+                const response = await fetch('/api/store/products?slug=urban-vogue');
+                const data = await response.json();
+
+                // Transform API data to match our interface
+                const transformedProducts = data.map((product: any) => ({
+                    id: product.id,
+                    slug: product.slug,
+                    name: product.title || product.name,
+                    price: product.basePrice || product.price || 0,
+                    category: product.category?.name || "Uncategorized",
+                    image: product.image || '/placeholder.jpg',
+                    badge: product.badge,
+                    salePrice: product.salePrice,
+                }));
+
+                setProducts(transformedProducts);
             } catch (error) {
-                console.error("Failed to fetch products:", error);
+                console.error('Failed to fetch products:', error);
             } finally {
                 setLoading(false);
             }
         }
+
         fetchProducts();
     }, []);
 
     const filteredProducts = products.filter((product) => {
         const categoryMatch =
-            selectedCategory === "All" || (product.category?.name === selectedCategory);
-
-        // Use basePrice if salePrice is missing
-        const displayPrice = product.salePrice || product.basePrice;
-
+            selectedCategory === "All" || product.category === selectedCategory;
+        const displayPrice = product.salePrice || product.price;
         const priceMatch =
             displayPrice >= priceRanges[selectedPriceRange].min &&
             displayPrice <= priceRanges[selectedPriceRange].max;
@@ -66,14 +75,14 @@ export default function Shop() {
     });
 
     if (loading) {
-        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+        return <Loading />;
     }
 
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-4xl font-normal tracking-wider uppercase mb-4">
+                <h1 className="text-4xl font-normal tracking-wider uppercase mb-4 font-montserrat">
                     All Products
                 </h1>
                 <div className="flex items-center justify-between">
@@ -103,13 +112,13 @@ export default function Shop() {
                     <div className="space-y-8 pb-8 lg:pb-0">
                         {/* Category Filter */}
                         <div>
-                            <h3 className="font-medium mb-4">Category</h3>
+                            <h3 className="font-medium mb-4 font-montserrat">Category</h3>
                             <div className="space-y-2">
                                 {categories.map((category) => (
                                     <button
                                         key={category}
                                         onClick={() => setSelectedCategory(category)}
-                                        className={`block w-full text-left px-3 py-2 rounded-md transition-colors ${selectedCategory === category
+                                        className={`block w-full text-left px-3 py-2 rounded-md transition-colors font-montserrat ${selectedCategory === category
                                             ? "bg-black text-white"
                                             : "hover:bg-gray-100"
                                             }`}
@@ -122,13 +131,13 @@ export default function Shop() {
 
                         {/* Price Filter */}
                         <div>
-                            <h3 className="font-medium mb-4">Price Range</h3>
+                            <h3 className="font-medium mb-4 font-montserrat">Price Range</h3>
                             <div className="space-y-2">
                                 {priceRanges.map((range, index) => (
                                     <button
                                         key={index}
                                         onClick={() => setSelectedPriceRange(index)}
-                                        className={`block w-full text-left px-3 py-2 rounded-md transition-colors text-sm ${selectedPriceRange === index
+                                        className={`block w-full text-left px-3 py-2 rounded-md transition-colors text-sm font-montserrat ${selectedPriceRange === index
                                             ? "bg-black text-white"
                                             : "hover:bg-gray-100"
                                             }`}
@@ -169,42 +178,40 @@ export default function Shop() {
 
                                         {/* Product Image */}
                                         <div className="bg-gray-50 mb-3 overflow-hidden aspect-[3/4]">
-                                            {product.image && (
-                                                <Image
-                                                    src={product.image}
-                                                    alt={product.title}
-                                                    width={400}
-                                                    height={600}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                />
-                                            )}
+                                            <Image
+                                                src={product.image}
+                                                alt={product.name}
+                                                width={400}
+                                                height={600}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                            />
                                         </div>
 
                                         {/* Product Info */}
                                         <div className="space-y-1">
-                                            <h3 className="text-sm">{product.title}</h3>
+                                            <h3 className="text-sm font-montserrat">{product.name}</h3>
                                             <div className="flex items-center gap-2">
                                                 {product.salePrice ? (
                                                     <>
                                                         <span className="text-sm text-gray-500 line-through">
-                                                            LE {product.basePrice.toFixed(2)}
+                                                            LE {product.price.toFixed(2)}
                                                         </span>
-                                                        <span className="text-sm font-medium">
+                                                        <span className="text-sm font-medium font-montserrat">
                                                             LE {product.salePrice.toFixed(2)}
                                                         </span>
                                                     </>
                                                 ) : (
-                                                    <span className="text-sm font-medium">
-                                                        LE {product.basePrice.toFixed(2)}
+                                                    <span className="text-sm font-medium font-montserrat">
+                                                        LE {product.price.toFixed(2)}
                                                     </span>
                                                 )}
                                             </div>
-                                            {product.salePrice && product.basePrice > 0 && (
+                                            {product.salePrice && (
                                                 <p className="text-xs text-red-600">
                                                     Save{" "}
                                                     {Math.round(
-                                                        ((product.basePrice - product.salePrice) /
-                                                            product.basePrice) *
+                                                        ((product.price - product.salePrice) /
+                                                            product.price) *
                                                         100
                                                     )}
                                                     %
@@ -227,7 +234,7 @@ export default function Shop() {
                                     setSelectedCategory("All");
                                     setSelectedPriceRange(0);
                                 }}
-                                className="text-black underline hover:opacity-70"
+                                className="text-black underline hover:opacity-70 font-montserrat"
                             >
                                 Clear all filters
                             </button>

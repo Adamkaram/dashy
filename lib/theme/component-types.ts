@@ -65,6 +65,7 @@ export interface FooterProps {
 
 export interface LayoutProps {
     children: React.ReactNode;
+    tenant?: any;
 }
 
 // =====================================================
@@ -80,8 +81,12 @@ export interface ThemeComponents {
     Layout: ComponentType<LayoutProps>;
     Home?: ComponentType<any>;
     Cart?: ComponentType<any>;
+    Checkout?: ComponentType<any>;
     ProductDetails?: ComponentType<any>;
     Shop?: ComponentType<any>;
+    Loading?: ComponentType<any>;
+    Error?: ComponentType<any>;
+    NotFound?: ComponentType<any>;
 }
 
 // =====================================================
