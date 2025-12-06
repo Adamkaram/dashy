@@ -328,7 +328,7 @@ export default function ServiceFormPage() {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <label className="block text-sm font-medium text-gray-700">
-                            صور الخدمة (حتى 6 صور) <span className="text-red-500">*</span>
+                            صور الخدمة (حتى 8 صور) <span className="text-red-500">*</span>
                         </label>
                         <div className="relative group">
                             <button
@@ -338,10 +338,10 @@ export default function ServiceFormPage() {
                                 className="px-4 py-2 bg-[#8F6B43] text-white rounded-lg hover:bg-[#53131C] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm hover:shadow-md"
                             >
                                 <Upload className="w-4 h-4" />
-                                {loading ? 'جاري الرفع...' : 'رفع متعدد (حتى 6 صور)'}
+                                {loading ? 'جاري الرفع...' : 'رفع متعدد (حتى 8 صور)'}
                             </button>
                             <div className="absolute left-0 top-full mt-2 w-64 bg-gray-900 text-white text-xs p-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
-                                💡 نصيحة: سمِّ الصور من 1 إلى 6 (مثل: 1.jpg, 2.jpg) لترتيبها تلقائياً
+                                💡 نصيحة: سمِّ الصور من 1 إلى 8 (مثل: 1.jpg, 2.jpg) لترتيبها تلقائياً
                             </div>
                         </div>
                     </div>
@@ -356,9 +356,9 @@ export default function ServiceFormPage() {
                         onChange={async (e) => {
                             const files = Array.from(e.target.files || []);
                             if (files.length === 0) return;
-                            if (files.length > 6) {
-                                alert('يمكنك رفع 6 صور كحد أقصى');
-                                toast.error('يمكنك رفع 6 صور كحد أقصى');
+                            if (files.length > 8) {
+                                alert('يمكنك رفع 8 صور كحد أقصى');
+                                toast.error('يمكنك رفع 8 صور كحد أقصى');
                                 e.target.value = '';
                                 return;
                             }
@@ -418,8 +418,8 @@ export default function ServiceFormPage() {
                         }}
                     />
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {[...Array(6)].map((_, index) => (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {[...Array(8)].map((_, index) => (
                             <motion.div
                                 key={index}
                                 layout

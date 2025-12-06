@@ -7,25 +7,7 @@ import { FooterProps } from '@/lib/theme/component-types';
 export default function ModernFooter({ tenant }: FooterProps) {
     return (
         <footer className="bg-gray-50 border-t border-gray-200">
-            {/* Newsletter Section */}
-            <div className="bg-black text-white py-12">
-                <div className="container mx-auto px-4">
-                    <div className="max-w-2xl mx-auto text-center">
-                        <h3 className="text-2xl font-bold mb-2">اشترك في النشرة البريدية</h3>
-                        <p className="text-gray-400 mb-6">احصل على آخر العروض والمنتجات الجديدة</p>
-                        <div className="flex gap-2 max-w-md mx-auto">
-                            <input
-                                type="email"
-                                placeholder="بريدك الإلكتروني"
-                                className="flex-1 px-4 py-3 rounded-full text-black focus:outline-none"
-                            />
-                            <button className="bg-white text-black px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors">
-                                اشترك
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
 
             {/* Main Footer */}
             <div className="container mx-auto px-4 py-12">
