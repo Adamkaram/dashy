@@ -10,3 +10,8 @@ const pool = new Pool({
 });
 
 export const db = drizzle(pool, { schema });
+
+// Helper for raw queries on tables not in Drizzle schema
+export async function query(text: string, params?: any[]) {
+    return pool.query(text, params);
+}

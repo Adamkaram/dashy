@@ -30,6 +30,7 @@ const navigation = [
     { name: 'الخدمات', href: '/admin/services', icon: Package },
     { name: 'شرائح Hero', href: '/admin/hero-slides', icon: ImageIcon },
     { name: 'المظهر', href: '/admin/themes', icon: Palette },
+    { name: 'النطاقات', href: '/admin/domains', icon: Globe },
     { name: 'الإعدادات', href: '/admin/settings', icon: Settings },
 ];
 
@@ -50,6 +51,7 @@ const navigationGroups = [
         items: [
             { name: 'المظهر', href: '/admin/themes', icon: Palette },
             { name: 'شرائح Hero', href: '/admin/hero-slides', icon: ImageIcon },
+            { name: 'النطاقات', href: '/admin/domains', icon: Globe },
             { name: 'الإعدادات', href: '/admin/settings', icon: Settings },
         ],
     },

@@ -3,8 +3,82 @@
    Isolated from storefront themes
    ============================================ */
 
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap");
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Ithra';
+    src: url('/fonts/Ithra-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* === Sarainah Color Variables === */
 :root {
+    --font-family-ar: 'Ithra', 'Almarai', sans-serif;
+
+    /* === Domain UI Design System Colors (Dark Theme) === */
+    /* Slate Colors */
+    --slate-1: #fcfcfd;
+    --slate-2: #f9f9fb;
+    --slate-3: #ddeaf814;
+    --slate-4: #d3edf81d;
+    --slate-5: #f1f5f9;
+    --slate-6: #d6ebfd30;
+    --slate-7: #334155;
+    --slate-8: #1e293b;
+    --slate-9: #91959b6d;
+    --slate-10: #64748b;
+    --slate-11: #b1b5c3;
+    --slate-12: #ffffff;
+
+    /* Yellow Colors */
+    --yellow-1: #14120b;
+    --yellow-2: #1b180f;
+    --yellow-3: #2d2305;
+    --yellow-4: #362b00;
+    --yellow-5: #433500;
+    --yellow-6: #524202;
+    --yellow-7: #665417;
+    --yellow-8: #836a21;
+    --yellow-9: #ffe629;
+    --yellow-10: #ffff57;
+    --yellow-11: #ffca16;
+    --yellow-12: #ffe7b3;
+
+    /* Green Colors */
+    --green-1: #00de4505;
+    --green-2: #dcfce7;
+    --green-3: #bbf7d0;
+    --green-4: #11ff992d;
+    --green-5: #86efac;
+    --green-6: #4ade80;
+    --green-7: #50fdac5e;
+    --green-8: #22c55e;
+    --green-9: #16a34a;
+    --green-10: #15803d;
+    --green-11: #166534;
+    --green-12: #14532d;
+    --green-50: #f0fdf4;
+    --green-100: #dcfce7;
+    --green-200: #bbf7d0;
+    --green-300: #86efac;
+    --green-400: #4ade80;
+    --green-500: #22c55e;
+    --green-600: #16a34a;
+    --green-700: #15803d;
+    --green-800: #166534;
+    --green-900: #14532d;
+
+    /* Gray Colors */
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+
     /* Legacy Colors */
     --color-cream-light: #ECE8DB;
     --color-beige: #F0EBE5;
@@ -51,6 +125,12 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+}
+
+body {
+    font-family: var(--font-family-ar);
 }
 
 /* === Sarainah-Inspired Utility Classes === */

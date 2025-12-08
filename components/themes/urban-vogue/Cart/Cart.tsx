@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import React from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
@@ -153,6 +154,9 @@ export default function CartPage() {
                 </div>
             )}
 
+            {/* Recently Viewed Section */}
+            <RecentlyViewed />
+
             {/* Popular Picks Section */}
             <div className="mt-16">
                 <div className="flex items-center justify-between mb-8">
@@ -210,6 +214,60 @@ export default function CartPage() {
                         </motion.div>
                     ))}
                 </div>
+            </div>
+        </div>
+    );
+}
+
+function RecentlyViewed() {
+    const [viewedItems, setViewedItems] = React.useState<any[]>([]);
+
+    React.useEffect(() => {
+        try {
+            const saved = localStorage.getItem('recentlyViewed');
+            if (saved) {
+                setViewedItems(JSON.parse(saved));
+            }
+        } catch (e) {
+            console.error('Failed to load recently viewed items', e);
+        }
+    }, []);
+
+    if (viewedItems.length === 0) return null;
+
+    return (
+        <div className="mt-16 text-center">
+            <h2 className="text-2xl uppercase tracking-wide font-heading mb-10">Recently Viewed</h2>
+
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-x-4 gap-y-8">
+                {viewedItems.map((item) => (
+                    <Link href={`/products/${item.slug}`} key={item.id} className="group block">
+                        <div className="bg-gray-50 mb-4 overflow-hidden aspect-[3/4]">
+                            <Image
+                                src={item.image}
+                                alt={item.title}
+                                width={300}
+                                height={400}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                            />
+                        </div>
+                        <div className="text-center space-y-1">
+                            <h3 className="text-sm font-light text-gray-900 leading-snug min-h-[2.5em] flex items-start justify-center">
+                                {item.title}
+                            </h3>
+                            <p className="text-sm font-normal text-gray-900">
+                                {item.salePrice ? (
+                                    <>
+                                        <span className="line-through text-gray-400 mr-2">LE {item.price.toLocaleString()}</span>
+                                        <span>LE {item.salePrice.toLocaleString()}</span>
+                                    </>
+                                ) : (
+                                    <span>LE {item.price.toLocaleString()}</span>
+                                )}
+                            </p>
+                        </div>
+                    </Link>
+                ))}
             </div>
         </div>
     );

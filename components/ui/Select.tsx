@@ -31,8 +31,8 @@ export function Select({ value, onChange, options, placeholder = 'اختر...', 
                     "w-full h-[60px] px-4 flex items-center justify-between",
                     "bg-gray-50 border border-gray-100 rounded-xl",
                     "text-[#46423D] text-base",
-                    "hover:bg-white hover:border-[#966428]/20",
-                    "focus:bg-white focus:ring-2 focus:ring-[#966428]/20 focus:border-[#966428]",
+                    "hover:bg-white hover:border-[black]/20",
+                    "focus:bg-white focus:ring-2 focus:ring-[black]/20 focus:border-[black]",
                     "outline-none transition-all",
                     className
                 )}

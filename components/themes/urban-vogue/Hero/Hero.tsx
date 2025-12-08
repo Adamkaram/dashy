@@ -7,8 +7,9 @@ import Image from 'next/image';
 
 export default function Hero({ slides }: HeroProps) {
     // Use the first slide or a default placeholder
-    const slide = slides?.[0] || {
-        image: '/themes/urban/hero-bg.jpg', // Placeholder
+    // Use the first slide or a default placeholder if no slides provided
+    const slide = slides && slides.length > 0 ? slides[0] : {
+        image: 'https://ext.same-assets.com/1322334751/1988460870.jpeg', // Valid placeholder
         title: 'URBAN ELEGANCE',
         subtitle: 'Discover the new collection',
         buttonText: 'SHOP NOW',
@@ -38,26 +39,23 @@ export default function Hero({ slides }: HeroProps) {
             </motion.div>
 
             {/* Content */}
-            <div className="relative z-10 container mx-auto px-6 h-full flex flex-col justify-center items-start">
+            <div className="relative z-10 container mx-auto px-6 h-full flex flex-col justify-center items-center">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.8, duration: 0.8 }}
-                    className="max-w-2xl text-white"
+                    className="hero__text-content vertical-center horizontal-center"
                 >
-                    <h2 className="text-lg md:text-xl font-medium tracking-[0.2em] mb-4 uppercase">
-                        {slide.subtitle}
-                    </h2>
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-8 leading-tight">
-                        {slide.title}
-                    </h1>
-
-                    <Link
-                        href={slide.buttonLink || '/shop'}
-                        className="inline-block bg-white text-black px-10 py-4 text-sm font-bold tracking-widest hover:bg-black hover:text-white transition-colors duration-300 uppercase"
-                    >
-                        {slide.buttonText}
-                    </Link>
+                    <div className="hero__text-shadow">
+                        <div className="hero__link">
+                            <Link
+                                href="/collections/second-skin-collection"
+                                className="btn--inverse inline-block"
+                            >
+                                Second Skin Collection
+                            </Link>
+                        </div>
+                    </div>
                 </motion.div>
             </div>
         </section>

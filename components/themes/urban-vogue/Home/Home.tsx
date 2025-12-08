@@ -10,6 +10,7 @@ import Hero from "../Hero/Hero";
 
 export default function Home() {
     const [products, setProducts] = useState<any[]>([]);
+    const [slides, setSlides] = useState<any[]>([]);
     const [heroLoaded, setHeroLoaded] = useState(false);
 
     useEffect(() => {
@@ -27,7 +28,21 @@ export default function Home() {
                 console.error("Failed to fetch products:", error);
             }
         }
+
+        async function fetchHeroSlides() {
+            try {
+                const res = await fetch('/api/hero-slides');
+                if (res.ok) {
+                    const data = await res.json();
+                    setSlides(data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch hero slides:", error);
+            }
+        }
+
         fetchProducts();
+        fetchHeroSlides();
 
         return () => clearTimeout(timer);
     }, []);
@@ -46,7 +61,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-background">
             {/* Hero Section */}
-            <Hero slides={[]} />
+            <Hero slides={slides} />
 
             {/* Second Skin Collection */}
             <section className="container mx-auto px-4 py-16">

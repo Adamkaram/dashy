@@ -87,6 +87,19 @@ export interface ThemeComponents {
     Loading?: ComponentType<any>;
     Error?: ComponentType<any>;
     NotFound?: ComponentType<any>;
+    AddToCartNotification?: ComponentType<AddToCartNotificationProps>;
+}
+
+export interface AddToCartNotificationProps {
+    isOpen: boolean;
+    onClose: () => void;
+    product: {
+        title: string;
+        image: string;
+        price: number;
+        size: string;
+        quantity: number;
+    };
 }
 
 // =====================================================

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import AddToCartNotificationResolver from "@/components/resolvers/AddToCartNotificationResolver";
 
 interface Product {
     id: string;
@@ -75,6 +76,38 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
         return () => window.removeEventListener('resize', checkScroll);
     }, [galleryImages]);
 
+    // Track Recently Viewed
+    useEffect(() => {
+        try {
+            const viewedItem = {
+                id: product.id,
+                title: product.title,
+                price: displayPrice,
+                image: product.image,
+                slug: product.slug,
+                salePrice: product.salePrice
+            };
+
+            const existing = localStorage.getItem('recentlyViewed');
+            let viewed = existing ? JSON.parse(existing) : [];
+
+            // Remove if exists to re-add at top
+            viewed = viewed.filter((item: any) => item.id !== product.id);
+
+            // Add to beginning
+            viewed.unshift(viewedItem);
+
+            // Limit to 10 items
+            if (viewed.length > 10) {
+                viewed = viewed.slice(0, 10);
+            }
+
+            localStorage.setItem('recentlyViewed', JSON.stringify(viewed));
+        } catch (error) {
+            console.error('Error saving recently viewed:', error);
+        }
+    }, [product, displayPrice]);
+
     // Auto-scroll to active thumbnail
     useEffect(() => {
         const container = thumbnailRefs.current[0]?.parentElement;
@@ -89,25 +122,18 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
 
             if (selectedImageIndex === 0) {
                 container.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (selectedImageIndex === galleryImages.length - 1) {
+                // Determine scrolling for last image: user requested "animation scroll... down... percent"
+                // forcing scrollHeight ensures the padding is visible and the image is cleared from the arrow.
+                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
             } else if (selectedImageIndex === 1) {
-                // Scroll so 1st image starts 50% scrolled out
-                // We need to scroll past the top padding (baseOffset) + half the item height
-                // No, baseOffset puts the top of item 0 at the top of viewport.
-                // Wait, if scrollTop = baseOffset, then the top of item 0 is at top of view (padding scrolled out).
-                // If we want item 0 to be half cut off, we need scrollTop to trigger that.
-                // scrollTop = (baseOffset position relative to content start) + (itemHeight/2).
-                // Actually offsetTop *is* position relative to content start.
-                // So scrollTop = baseOffset + (itemHeight / 2).
-                // This scrolls past the padding (baseOffset) AND half the image.
-                container.scrollTo({ top: baseOffset + (itemHeight / 2), behavior: 'smooth' });
+                // Image 1 (Index 1) - slight offset to hint at previous
+                container.scrollTo({ top: baseOffset + (itemHeight / 3), behavior: 'smooth' });
             } else if (selectedImageIndex === 2) {
-                // Image 2 (Index 1)'s top is at baseOffset + itemHeight.
-                // We want Image 2 to be 3/4 visible. Top 1/4 scrolled out.
-                // So scrollTop should be at (baseOffset + itemHeight) + (itemHeight * 0.25).
-                container.scrollTo({ top: baseOffset + itemHeight + (itemHeight * 0.25), behavior: 'smooth' });
+                // Image 2 (Index 2) - show more context
+                container.scrollTo({ top: baseOffset + itemHeight + (itemHeight / 3), behavior: 'smooth' });
             } else {
-                // Standard behavior for others
-                // Centering slightly might be nicer for "Image 8" case described by user
+                // Standard behavior for others - Ensure minimal scroll movement if already visible
                 selectedThumbnail.scrollIntoView({
                     behavior: "smooth",
                     block: "nearest",
@@ -117,7 +143,16 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
             // Give time for scroll to happen before checking
             setTimeout(checkScroll, 300);
         }
-    }, [selectedImageIndex]);
+    }, [selectedImageIndex, galleryImages.length]);
+
+    const [showNotification, setShowNotification] = useState(false);
+    const [lastAddedItem, setLastAddedItem] = useState<{
+        title: string;
+        image: string;
+        price: number;
+        size: string;
+        quantity: number;
+    } | null>(null);
 
     const handleAddToCart = () => {
         addToCart({
@@ -127,7 +162,15 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
             image: product.image,
             size: selectedSize,
         });
-        toast.success(`Added ${product.title} (Size ${selectedSize}) to cart`);
+
+        setLastAddedItem({
+            title: product.title,
+            image: product.image,
+            price: displayPrice,
+            size: selectedSize,
+            quantity: 1
+        });
+        setShowNotification(true);
     };
 
     return (
@@ -147,11 +190,11 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         onClick={() => {
-                                            const container = thumbnailRefs.current[0]?.parentElement;
-                                            if (container) {
-                                                container.scrollBy({ top: -150, behavior: 'smooth' });
-                                                setTimeout(checkScroll, 300);
-                                            }
+                                            // Act as "Previous Image" button
+                                            const newIndex = Math.max(0, selectedImageIndex - 1);
+                                            const newDirection = newIndex > selectedImageIndex ? 1 : -1;
+                                            setDirection(newDirection);
+                                            setSelectedImageIndex(newIndex);
                                         }}
                                         className="absolute top-0 left-0 w-full h-8 flex items-center justify-center bg-white z-20 cursor-pointer text-black"
                                     >
@@ -161,7 +204,7 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                             </AnimatePresence>
 
                             <div
-                                className="flex-1 overflow-y-auto scrollbar-hide space-y-3 py-10 no-scrollbar scroll-smooth"
+                                className="flex-1 overflow-y-auto scrollbar-hide py-10 no-scrollbar scroll-smooth"
                                 onScroll={checkScroll}
                             >
                                 <style jsx global>{`
@@ -184,8 +227,8 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                                             setDirection(newDirection);
                                             setSelectedImageIndex(index);
                                         }}
-                                        className={`relative aspect-[3/4] w-full transition-all duration-300 border border-transparent ${selectedImageIndex === index
-                                            ? "ring-1 ring-black shadow-sm"
+                                        className={`product__thumb-item relative aspect-[2/3] w-full mb-[8.5px] md:mb-[15px] transition-all duration-300 border border-transparent ${selectedImageIndex === index
+                                            ? "is-active"
                                             : "opacity-100 hover:opacity-80"
                                             }`}
                                     >
@@ -209,17 +252,15 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         onClick={() => {
-                                            const container = thumbnailRefs.current[0]?.parentElement;
-                                            if (container) {
-                                                container.scrollBy({ top: 150, behavior: 'smooth' });
-                                                setTimeout(checkScroll, 300);
-                                            }
+                                            // Act as "Next Image" button
+                                            const newIndex = Math.min(galleryImages.length - 1, selectedImageIndex + 1);
+                                            const newDirection = newIndex > selectedImageIndex ? 1 : -1;
+                                            setDirection(newDirection);
+                                            setSelectedImageIndex(newIndex);
                                         }}
                                         className="absolute bottom-0 left-0 w-full h-8 flex items-center justify-center bg-white z-20 cursor-pointer text-black"
                                     >
-                                        <div className="animate-bounce">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                                        </div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                                     </motion.button>
                                 )}
                             </AnimatePresence>
@@ -435,6 +476,14 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                     </div>
                 )
             }
+            {/* Notification Resolver */}
+            {lastAddedItem && (
+                <AddToCartNotificationResolver
+                    isOpen={showNotification}
+                    onClose={() => setShowNotification(false)}
+                    product={lastAddedItem}
+                />
+            )}
         </div >
     );
 }

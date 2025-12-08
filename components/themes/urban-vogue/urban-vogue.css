@@ -12,3 +12,77 @@
     font-weight: 400;
     /* Default weight as requested */
 }
+
+.product__thumb-item {
+    position: relative;
+    /* Ensure relative positioning for the pseudo-element */
+}
+
+/* User requested styles for active border */
+.product__thumb-item.is-active:before,
+.product__thumb-item:focus:before {
+    bottom: 0;
+    box-shadow: inset 0 0 0 2px var(--colorTextBody, #000);
+    /* Fallback to #000 if var not set */
+    content: "";
+    display: block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    /* Increased z-index to ensure visibility over image */
+    pointer-events: none;
+    /* Ensure clicks pass through to the button */
+}
+
+/* Global box-sizing reset as requested (though usually handled by base styles, adding here locally for safety within components if needed, or keeping it scoped if preferred) */
+*,
+:after,
+:before,
+input {
+    box-sizing: border-box;
+}
+
+/* Hero Button Styles */
+:root {
+    --colorImageOverlayTextShadow: 0.8;
+}
+
+.hero__text-shadow:before {
+    background: radial-gradient(rgba(0, 0, 0, var(--colorImageOverlayTextShadow)) 0%, transparent 60%);
+    bottom: 0;
+    content: "";
+    left: 0;
+    margin: -100px -200px -100px -200px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+}
+
+.hero__text-shadow {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+}
+
+.btn--inverse {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    transition: all 0.3s ease;
+    padding: 8px 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    /* Rounded full */
+}
+
+.btn--inverse:hover {
+    background-color: #fff;
+    color: #000;
+    transform: scale(1.05);
+}
