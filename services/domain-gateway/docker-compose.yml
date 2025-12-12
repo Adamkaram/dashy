@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  domain-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: domain-gateway
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - caddy_data:/data/caddy
+    environment:
+      # Server
+      - GATEWAY_SERVER_ENVIRONMENT=development
+      - GATEWAY_SERVER_API_PORT=8080
+      - GATEWAY_SERVER_HTTP_PORT=80
+      - GATEWAY_SERVER_HTTPS_PORT=443
+      
+      # Database (Supabase)
+      - DATABASE_URL=postgresql://postgres:your_password@db.your-project.supabase.co:5432/postgres
+      
+      # Caddy
+      - GATEWAY_CADDY_ADMIN_API_ADDR=localhost:2019
+      - GATEWAY_CADDY_STORAGE_PATH=/data/caddy
+      - ACME_EMAIL=admin@yourcompany.com
+      - BASE_DOMAIN=panaroid.app
+      - GATEWAY_CADDY_BACKEND_HOST=host.docker.internal
+      - GATEWAY_CADDY_BACKEND_PORT=3000
+      
+      # DNS (Cloudflare)
+      - GATEWAY_DNS_PROVIDER=cloudflare
+      - DNS_API_TOKEN=your_cloudflare_api_token
+      - DNS_ZONE_ID=your_cloudflare_zone_id
+      
+      # JWT
+      - JWT_SECRET=your_super_secret_jwt_key_here
+      
+      # Worker
+      - GATEWAY_WORKER_VERIFICATION_INTERVAL=5m
+      - GATEWAY_WORKER_MAX_RETRIES=3
+    networks:
+      - app-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  caddy_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

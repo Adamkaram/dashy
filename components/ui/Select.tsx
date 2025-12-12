@@ -80,7 +80,7 @@ export function Select({ value, onChange, options, placeholder = 'اختر...', 
                                         {option.label}
                                     </span>
                                     {isSelected && (
-                                        <Check className="w-4 h-4 text-[#8F6B43]" />
+                                        <Check className="w-4 h-4 text-[#FF6500]" />
                                     )}
                                 </button>
                             );

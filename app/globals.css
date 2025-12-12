@@ -145,3 +145,121 @@
     color: hsl(var(--foreground));
   }
 }
+
+/* Custom Sonner Toast Styling - Dashboard Theme */
+[data-sonner-toaster] {
+  font-family: inherit;
+}
+
+/* Success Toast - Orange Branding */
+[data-sonner-toast][data-type="success"] {
+  --toast-bg: linear-gradient(to right, rgba(255, 101, 0, 0.05), white) !important;
+  border-left: 4px solid #FF6500 !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-icon] svg {
+  color: #FF6500 !important;
+}
+
+/* Error Toast */
+[data-sonner-toast][data-type="error"] {
+  --toast-bg: linear-gradient(to right, rgb(254, 242, 242), white) !important;
+  border-left: 4px solid #ef4444 !important;
+}
+
+/* Warning Toast */
+[data-sonner-toast][data-type="warning"] {
+  --toast-bg: linear-gradient(to right, rgb(255, 251, 235), white) !important;
+  border-left: 4px solid #f59e0b !important;
+}
+
+/* Info Toast */
+[data-sonner-toast][data-type="info"] {
+  --toast-bg: linear-gradient(to right, rgb(239, 246, 255), white) !important;
+  border-left: 4px solid #3b82f6 !important;
+}
+
+/* Toast Content Styling */
+[data-sonner-toast] [data-title] {
+  font-weight: 600 !important;
+  color: #171717 !important;
+}
+
+[data-sonner-toast] [data-description] {
+  color: #737373 !important;
+}
+
+/* Close Button */
+[data-sonner-toast] [data-close-button] {
+  color: #a3a3a3;
+  transition: all 0.15s;
+}
+
+[data-sonner-toast] [data-close-button]:hover {
+  color: #525252;
+  background: #f5f5f5;
+}
+
+/* Action Button */
+[data-sonner-toast] [data-button] {
+  background: #FF6500 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.15s !important;
+}
+
+[data-sonner-toast] [data-button]:hover {
+  background: #FF4F0F !important;
+}
+
+/* Animations for Empty State */
+@keyframes infinite-scroll-y {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(var(--scroll, -50%));
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}

@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check expiration
-        if (coupon.expires_at && new Date(coupon.expires_at) < now) {
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) {
             return NextResponse.json(
                 { error: 'هذا الكوبون منتهي الصلاحية' },
                 { status: 400 }
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check usage limit
-        if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
+        if (coupon.usage_limit && coupon.usage_count >= coupon.usage_limit) {
             return NextResponse.json(
                 { error: 'تم استخدام هذا الكوبون بالكامل' },
                 { status: 400 }
@@ -69,8 +69,8 @@ export async function POST(request: NextRequest) {
         } else if (coupon.discount_type === 'percentage' && order_amount) {
             discount = (order_amount * coupon.discount_value) / 100;
             // Apply max discount if set
-            if (coupon.max_discount && discount > coupon.max_discount) {
-                discount = coupon.max_discount;
+            if (coupon.max_discount_amount && discount > coupon.max_discount_amount) {
+                discount = coupon.max_discount_amount;
             }
         }
 

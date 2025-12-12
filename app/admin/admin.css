@@ -14,7 +14,7 @@
     font-display: swap;
 }
 
-/* === Sarainah Color Variables === */
+/* === Brand Color Variables (Orange Theme) === */
 :root {
     --font-family-ar: 'Ithra', 'Almarai', sans-serif;
 
@@ -33,33 +33,34 @@
     --slate-11: #b1b5c3;
     --slate-12: #ffffff;
 
-    /* Yellow Colors */
-    --yellow-1: #14120b;
-    --yellow-2: #1b180f;
-    --yellow-3: #2d2305;
-    --yellow-4: #362b00;
-    --yellow-5: #433500;
-    --yellow-6: #524202;
-    --yellow-7: #665417;
-    --yellow-8: #836a21;
-    --yellow-9: #ffe629;
-    --yellow-10: #ffff57;
-    --yellow-11: #ffca16;
-    --yellow-12: #ffe7b3;
+    /* Orange Brand Colors */
+    --orange-primary: #FF6500;
+    --orange-light: #FF9D23;
+    --orange-dark: #FF4F0F;
+    --orange-50: #FFF7ED;
+    --orange-100: #FFEDD5;
+    --orange-200: #FED7AA;
+    --orange-300: #FDBA74;
+    --orange-400: #FB923C;
+    --orange-500: #F97316;
+    --orange-600: #EA580C;
+    --orange-700: #C2410C;
+    --orange-800: #9A3412;
+    --orange-900: #7C2D12;
 
     /* Green Colors */
-    --green-1: #00de4505;
-    --green-2: #dcfce7;
-    --green-3: #bbf7d0;
-    --green-4: #11ff992d;
-    --green-5: #86efac;
-    --green-6: #4ade80;
-    --green-7: #50fdac5e;
-    --green-8: #22c55e;
-    --green-9: #16a34a;
-    --green-10: #15803d;
-    --green-11: #166534;
-    --green-12: #14532d;
+    --green-1: #0e1512;
+    --green-2: #121b17;
+    --green-3: #132d21;
+    --green-4: #113b29;
+    --green-5: #174933;
+    --green-6: #20573e;
+    --green-7: #28684a;
+    --green-8: #2f7c57;
+    --green-9: #30a46c;
+    --green-10: #33b074;
+    --green-11: #3dd68c;
+    --green-12: #b1f1cb;
     --green-50: #f0fdf4;
     --green-100: #dcfce7;
     --green-200: #bbf7d0;
@@ -79,55 +80,80 @@
     --gray-800: #1f2937;
     --gray-900: #111827;
 
-    /* Legacy Colors */
-    --color-cream-light: #ECE8DB;
-    --color-beige: #F0EBE5;
-    --color-brown-gold: #8F6B43;
-    --color-burgundy: #53131C;
+    /* Legacy Colors (Updated to Orange) */
+    --color-cream-light: #FFF7ED;
+    --color-beige: #FFEDD5;
+    --color-brown-gold: #FF6500;
+    --color-burgundy: #FF4F0F;
     --color-gray-dark: #46423D;
     --color-black: #363533;
 
-    /* Legacy Aliases */
-    --main-color: var(--color-burgundy);
-    --secondary-color: var(--color-brown-gold);
+    /* Legacy Aliases (Orange) */
+    --main-color: var(--orange-dark);
+    --secondary-color: var(--orange-primary);
     --dark-brown: var(--color-gray-dark);
-    --accent-rose: #d1a58d;
+    --accent-rose: #FF9D23;
 
-    /* Tailwind Variables (HSL Channels) */
-    --background: 34 24% 92%;
-    /* #F0EBE5 */
+    /* Golden Palette (Keep for special elements) */
+    --golden: #B59970;
+    --golden-light: #C8A97F;
+    --golden-dark: #9D8660;
+
+    /* Tailwind Variables (HSL Channels) - Orange Theme */
+    --background: 30 100% 97%;
+    /* #FFF7ED */
     --foreground: 45 7% 26%;
     /* #46423D */
-    --card: 34 24% 92%;
+    --card: 0 0% 100%;
     --card-foreground: 45 7% 26%;
-    --popover: 34 24% 92%;
+    --popover: 0 0% 100%;
     --popover-foreground: 45 7% 26%;
-    --primary: 351 63% 20%;
-    /* #53131C */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 32 36% 41%;
-    /* #8F6B43 */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 44 26% 89%;
-    /* #ECE8DB */
+    --primary: 24 100% 50%;
+    /* #FF6500 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 100% 57%;
+    /* #FF9D23 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 30 100% 97%;
+    /* #FFF7ED */
     --muted-foreground: 45 7% 36%;
-    --accent: 32 36% 41%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 24 100% 50%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 32 36% 41%;
-    --input: 32 36% 41%;
-    --ring: 351 63% 20%;
+    --border: 24 50% 70%;
+    --input: 24 50% 70%;
+    --ring: 24 100% 50%;
     --radius: 0.5rem;
 
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    /* Chart Colors - Orange Palette */
+    --chart-1: 24 100% 50%;
+    /* #FF6500 */
+    --chart-2: 32 100% 57%;
+    /* #FF9D23 */
+    --chart-3: 18 100% 53%;
+    /* #FF4F0F */
+    --chart-4: 25 100% 55%;
+    /* #FE7743 */
+    --chart-5: 20 100% 52%;
+    /* #FF3B00 */
+
+    /* Analytics Colors */
+    --color-conversion: #FF6500;
+    --color-abandoned: #FE7743;
+
+    /* Chip & Interactive Element Colors */
+    --chip-selected-bg: #2A1711;
+    --chip-unselected-bg: rgba(39, 39, 42, 0.5);
+    --chip-pressed-bg: #1F1209;
+    --chip-selected-text: #FF6500;
+    --checkmark-bg: #FF6633;
+    --checkmark-icon: #2A1711;
+
+    /* Brand Gradient */
+    --brand-gradient: linear-gradient(135deg, #FF9D23 0%, #FF6500 50%, #FF4F0F 100%);
 }
+
 
 body {
     font-family: var(--font-family-ar);
@@ -158,7 +184,7 @@ body {
 
 /* Burgundy Gradient Background */
 .bg-gradient-burgundy {
-    background: linear-gradient(135deg, #53131C 0%, #3D0E14 100%);
+    background: linear-gradient(135deg, #FF4F0F 0%, #3D0E14 100%);
 }
 
 .image-overlay::after {
@@ -313,7 +339,7 @@ body {
 }
 
 .service-caption a:hover {
-    color: #8F6B43;
+    color: #FF6500;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
@@ -479,7 +505,7 @@ body {
 
 /* Sarainah Header - Exact Clone */
 .sarainah-header {
-    background: linear-gradient(135deg, #53131C 0%, #3D0E14 100%);
+    background: linear-gradient(135deg, #FF4F0F 0%, #3D0E14 100%);
     padding: 1.5rem 0;
     position: relative;
     z-index: 100;
@@ -660,4 +686,207 @@ body {
 
 .language-switcher:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   TIPTAP EDITOR STYLES
+   ============================================ */
+
+/* Base Editor Container */
+.tiptap,
+.ProseMirror {
+    outline: none;
+    min-height: 150px;
+    padding: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #1f2937;
+}
+
+.ProseMirror:focus {
+    outline: none;
+}
+
+/* Placeholder */
+.tiptap p.is-editor-empty:first-child::before,
+.ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: right;
+    color: #9ca3af;
+    pointer-events: none;
+    height: 0;
+}
+
+/* Typography */
+.tiptap p,
+.ProseMirror p {
+    margin: 0.5em 0;
+}
+
+.tiptap h1,
+.ProseMirror h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem;
+    line-height: 1.2;
+}
+
+.tiptap h2,
+.ProseMirror h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+    line-height: 1.3;
+}
+
+.tiptap h3,
+.ProseMirror h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0.75rem 0 0.5rem;
+    line-height: 1.4;
+}
+
+/* Bold & Italic */
+.tiptap strong,
+.ProseMirror strong {
+    font-weight: 700;
+}
+
+.tiptap em,
+.ProseMirror em {
+    font-style: italic;
+}
+
+/* Lists */
+.tiptap ul,
+.ProseMirror ul {
+    list-style-type: disc;
+    padding-right: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.tiptap ol,
+.ProseMirror ol {
+    list-style-type: decimal;
+    padding-right: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.tiptap li,
+.ProseMirror li {
+    margin: 0.25rem 0;
+}
+
+.tiptap li p,
+.ProseMirror li p {
+    margin: 0;
+}
+
+/* Blockquote */
+.tiptap blockquote,
+.ProseMirror blockquote {
+    border-right: 3px solid #FF6500;
+    padding-right: 1rem;
+    margin: 1rem 0;
+    font-style: italic;
+    color: #4b5563;
+}
+
+/* Code */
+.tiptap code,
+.ProseMirror code {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.8125rem;
+}
+
+.tiptap pre,
+.ProseMirror pre {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.tiptap pre code,
+.ProseMirror pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* Horizontal Rule */
+.tiptap hr,
+.ProseMirror hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 1.5rem 0;
+}
+
+/* Links */
+.tiptap a,
+.ProseMirror a {
+    color: #FF6500;
+    text-decoration: underline;
+}
+
+.tiptap a:hover,
+.ProseMirror a:hover {
+    color: #FF4F0F;
+}
+
+/* Selection */
+.tiptap ::selection,
+.ProseMirror ::selection {
+    background-color: rgba(143, 107, 67, 0.2);
+}
+
+/* Toolbar Styles */
+.tiptap-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tiptap-toolbar button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #374151;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tiptap-toolbar button:hover {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+.tiptap-toolbar button.is-active,
+.tiptap-toolbar button[data-active="true"] {
+    background-color: #1f2937;
+    color: white;
+    border-color: #1f2937;
+}
+
+/* Fix for prose class conflicts */
+.prose .tiptap,
+.prose .ProseMirror {
+    max-width: none;
 }

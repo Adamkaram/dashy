@@ -24,7 +24,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
             />
 
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#8F6B43]/90 via-[#8F6B43]/40 to-transparent opacity-90" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#FF6500]/90 via-[#FF6500]/40 to-transparent opacity-90" />
 
             {/* Content */}
             <div className="absolute bottom-0 left-0 right-0 p-6 text-white text-center">

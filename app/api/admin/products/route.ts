@@ -22,6 +22,7 @@ export async function GET() {
             category_id: product.categoryId,
             base_price: product.basePrice,
             is_active: product.isActive,
+            metadata: product.metadata,
             created_at: product.createdAt,
             updated_at: product.updatedAt,
         }));
@@ -41,7 +42,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { slug, category_id, title, subtitle, image, description, base_price, images, provider_name, provider_logo, policy } = body;
+        const { slug, category_id, title, image, description, base_price, images, metadata } = body;
 
         if (!slug || !category_id || !title) {
             return NextResponse.json(
@@ -70,14 +71,12 @@ export async function POST(request: NextRequest) {
                     slug,
                     category_id,
                     title,
-                    subtitle,
                     image: images && images.length > 0 ? images[0] : image, // Use first image as main
                     description,
                     base_price: base_price || 0,
+                    sale_price: body.sale_price || 0,
                     is_active: true,
-                    provider_name: provider_name || 'My Moments',
-                    provider_logo,
-                    policy,
+                    metadata: metadata || {},
                 },
             ])
             .select()

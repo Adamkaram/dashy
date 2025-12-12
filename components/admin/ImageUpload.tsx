@@ -146,7 +146,7 @@ export default function ImageUpload({ value, onChange, label = 'الصورة', r
                             <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
                                 <div className="w-3/4 bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
                                     <div
-                                        className="bg-gradient-to-r from-[#8F6B43] to-[#53131C] h-full transition-all duration-300 ease-out"
+                                        className="bg-gradient-to-r from-[#FF6500] to-[#FF4F0F] h-full transition-all duration-300 ease-out"
                                         style={{ width: `${uploadProgress}%` }}
                                     />
                                 </div>
@@ -176,16 +176,16 @@ export default function ImageUpload({ value, onChange, label = 'الصورة', r
                     onClick={() => !uploading && fileInputRef.current?.click()}
                     className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${uploading
                         ? 'border-gray-300 cursor-not-allowed'
-                        : 'border-gray-300 cursor-pointer hover:border-[#8F6B43]'
+                        : 'border-gray-300 cursor-pointer hover:border-[#FF6500]'
                         }`}
                 >
                     <div className="flex flex-col items-center gap-2">
                         {uploading ? (
                             <>
-                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8F6B43]"></div>
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF6500]"></div>
                                 <div className="w-48 bg-gray-200 rounded-full h-2 mt-2">
                                     <div
-                                        className="bg-gradient-to-r from-[#8F6B43] to-[#53131C] h-full rounded-full transition-all duration-300"
+                                        className="bg-gradient-to-r from-[#FF6500] to-[#FF4F0F] h-full rounded-full transition-all duration-300"
                                         style={{ width: `${uploadProgress}%` }}
                                     />
                                 </div>

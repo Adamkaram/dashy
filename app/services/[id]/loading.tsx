@@ -1,7 +1,7 @@
 export default function ServiceLoading() {
     return (
-        <div dir="rtl" className="min-h-screen" style={{ backgroundColor: '#F0EBE5' }}>
-            <section className="sec-padding page service-details-page py-8" style={{ backgroundColor: '#F0EBE5' }}>
+        <div dir="rtl" className="min-h-screen" style={{ backgroundColor: '#FFEDD5' }}>
+            <section className="sec-padding page service-details-page py-8" style={{ backgroundColor: '#FFEDD5' }}>
                 {/* Header Skeleton */}
                 <header className="py-5 bg-gradient-burgundy mb-8 rounded-xl mx-6 md:mx-12 shadow-lg">
                     <div className="container mx-auto px-8 md:px-16">

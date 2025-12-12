@@ -50,7 +50,7 @@ input {
 }
 
 .hero__text-shadow:before {
-    background: radial-gradient(rgba(0, 0, 0, var(--colorImageOverlayTextShadow)) 0%, transparent 60%);
+    /* background: radial-gradient(rgba(0, 0, 0, var(--colorImageOverlayTextShadow)) 0%, transparent 60%); */
     bottom: 0;
     content: "";
     left: 0;

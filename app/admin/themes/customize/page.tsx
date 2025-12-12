@@ -11,10 +11,10 @@ import { cn } from '@/lib/utils';
 // Mock data for now - will be replaced with real theme config
 const MOCK_THEME_CONFIG = {
     colors: {
-        primary: '#53131C',
-        secondary: '#8F6B43',
+        primary: '#FF4F0F',
+        secondary: '#FF6500',
         accent: '#B4786C',
-        background: '#F0EBE5',
+        background: '#FFEDD5',
         foreground: '#46423D',
     },
     fonts: {

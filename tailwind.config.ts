@@ -49,22 +49,7 @@ export default {
                     '3': 'hsl(var(--chart-3))',
                     '4': 'hsl(var(--chart-4))',
                     '5': 'hsl(var(--chart-5))'
-                },
-                green: {
-                    '1': 'var(--green-1)',
-                    '2': 'var(--green-2)',
-                    '3': 'var(--green-3)',
-                    '4': 'var(--green-4)',
-                    '5': 'var(--green-5)',
-                    '6': 'var(--green-6)',
-                    '7': 'var(--green-7)',
-                    '8': 'var(--green-8)',
-                    '9': 'var(--green-9)',
-                    '10': 'var(--green-10)',
-                    '11': 'var(--green-11)',
-                    '12': 'var(--green-12)',
-                },
-                root: 'var(--bg-primary)',
+                }
             },
         },
         borderRadius: {

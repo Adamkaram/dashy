@@ -172,7 +172,7 @@ export default function ServiceDetails() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f5ebe5]">
-        <div className="text-[#8F6B43] text-xl">جاري التحميل...</div>
+        <div className="text-[#FF6500] text-xl">جاري التحميل...</div>
       </div>
     );
   }
@@ -365,11 +365,11 @@ export default function ServiceDetails() {
   return (
     <div dir="rtl" className="min-h-screen" style={{ backgroundColor: 'var(--color-beige)' }}>
       {/* Page Header and Main Content - Combined Section */}
-      <section className="sec-padding page service-details-page py-8" style={{ backgroundColor: '#F0EBE5' }}>
+      <section className="sec-padding page service-details-page py-8" style={{ backgroundColor: '#FFEDD5' }}>
         {/* Page Header */}
         <header className="py-5 bg-gradient-burgundy mb-8 rounded-xl mx-6 md:mx-12 shadow-lg">
           <div className="container mx-auto px-8 md:px-16">
-            <h4 className="text-base font-bold mb-2 text-[#8F6B43]">
+            <h4 className="text-base font-bold mb-2 text-[#FF6500]">
               {serviceTitle}
             </h4>
 
@@ -480,11 +480,11 @@ export default function ServiceDetails() {
                     {service.provider_name || 'My Moments'}
                   </span>
                 </div>
-                <h1 className="single-title text-2xl md:text-3xl font-bold text-[#8F6B43] tracking-tight leading-tight mt-4">
+                <h1 className="single-title text-2xl md:text-3xl font-bold text-[#FF6500] tracking-tight leading-tight mt-4">
                   {serviceTitle}
                 </h1>
               </div>
-              <div className="h-px bg-gradient-to-r from-[#8F6B43]/20 to-transparent my-6" />
+              <div className="h-px bg-gradient-to-r from-[#FF6500]/20 to-transparent my-6" />
 
               {/* Payment Options */}
               <div className="payment-options mb-8">
@@ -520,9 +520,9 @@ export default function ServiceDetails() {
               <div className="mb-8 px-2">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <button className="flex items-center gap-2 text-[#8F6B43] hover:text-[#7a5a38] transition-colors text-sm font-medium group">
+                    <button className="flex items-center gap-2 text-[#FF6500] hover:text-[#FF4F0F] transition-colors text-sm font-medium group">
                       <Info className="w-4 h-4" />
-                      <span className="border-b border-dashed border-[#8F6B43] group-hover:border-[#7a5a38]">
+                      <span className="border-b border-dashed border-[#FF6500] group-hover:border-[#FF4F0F]">
                         سياسة البائع
                       </span>
                     </button>
@@ -789,19 +789,19 @@ export default function ServiceDetails() {
 
                         {/* Error Message */}
                         {couponError && (
-                          <div className="mt-3 p-3 bg-[#53131C]/10 border border-[#53131C]/30 rounded-lg flex items-start gap-2">
-                            <svg className="w-5 h-5 text-[#53131C] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="mt-3 p-3 bg-[#FF4F0F]/10 border border-[#FF4F0F]/30 rounded-lg flex items-start gap-2">
+                            <svg className="w-5 h-5 text-[#FF4F0F] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <p className="text-sm text-[#53131C] font-medium">{couponError}</p>
+                            <p className="text-sm text-[#FF4F0F] font-medium">{couponError}</p>
                           </div>
                         )}
 
                         {couponApplied && (
-                          <div className="mt-4 p-5 bg-gradient-to-br from-[#ECE8DB] to-[#F0EBE5] border-2 border-[#8F6B43] rounded-[15px] shadow-lg">
+                          <div className="mt-4 p-5 bg-gradient-to-br from-[#FFF7ED] to-[#FFEDD5] border-2 border-[#FF6500] rounded-[15px] shadow-lg">
                             <div className="flex items-center mb-3">
-                              <i className="bi bi-check-circle-fill text-[#8F6B43] text-xl ml-2"></i>
-                              <strong className="text-[#53131C] text-lg">تم تطبيق الكوبون</strong>
+                              <i className="bi bi-check-circle-fill text-[#FF6500] text-xl ml-2"></i>
+                              <strong className="text-[#FF4F0F] text-lg">تم تطبيق الكوبون</strong>
                             </div>
                             <div className="grid md:grid-cols-2 gap-4 mb-3">
                               <div>
@@ -812,13 +812,13 @@ export default function ServiceDetails() {
                               </div>
                               <div>
                                 <span className="text-[#666] text-sm">الخصم:</span>
-                                <div className="text-[#53131C] font-semibold text-base" id="discount_amount">
+                                <div className="text-[#FF4F0F] font-semibold text-base" id="discount_amount">
                                   {discount}.000 د.ك
                                 </div>
                               </div>
                             </div>
                             <div className="text-center">
-                              <div className="inline-block bg-[#8F6B43] text-white px-5 py-2 rounded-[25px] font-semibold text-base">
+                              <div className="inline-block bg-[#FF6500] text-white px-5 py-2 rounded-[25px] font-semibold text-base">
                                 <i className="bi bi-gift ml-2"></i>المبلغ المحفوظ: <span id="savings_amount">{discount}.000 د.ك</span>
                               </div>
                             </div>
@@ -887,13 +887,13 @@ export default function ServiceDetails() {
                       <div className="max-w-md mx-auto">
                         {/* Success Icon */}
                         <div className="relative mb-6">
-                          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-[#ECE8DB] to-[#F0EBE5] flex items-center justify-center border-4 border-[#8F6B43]/20 shadow-lg">
-                            <svg className="w-12 h-12 text-[#8F6B43]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-[#FFF7ED] to-[#FFEDD5] flex items-center justify-center border-4 border-[#FF6500]/20 shadow-lg">
+                            <svg className="w-12 h-12 text-[#FF6500]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                             </svg>
                           </div>
                           {/* Decorative circles */}
-                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#8F6B43]/5 rounded-full -z-10 animate-pulse"></div>
+                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#FF6500]/5 rounded-full -z-10 animate-pulse"></div>
                         </div>
 
                         {/* Success Message */}
@@ -908,9 +908,9 @@ export default function ServiceDetails() {
 
                         {/* Decorative divider */}
                         <div className="flex items-center gap-3 my-6">
-                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#8F6B43]/30 to-transparent"></div>
-                          <div className="w-2 h-2 rounded-full bg-[#8F6B43]/30"></div>
-                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#8F6B43]/30 to-transparent"></div>
+                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#FF6500]/30 to-transparent"></div>
+                          <div className="w-2 h-2 rounded-full bg-[#FF6500]/30"></div>
+                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#FF6500]/30 to-transparent"></div>
                         </div>
 
                         {/* Action hint */}
@@ -919,9 +919,9 @@ export default function ServiceDetails() {
                             يمكنك حجز خدمة أخرى الآن أو تصفح المزيد من خدماتنا
                           </p>
                           <div className="flex gap-2 justify-center">
-                            <div className="w-2 h-2 rounded-full bg-[#8F6B43] animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="w-2 h-2 rounded-full bg-[#8F6B43] animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="w-2 h-2 rounded-full bg-[#8F6B43] animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                            <div className="w-2 h-2 rounded-full bg-[#FF6500] animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="w-2 h-2 rounded-full bg-[#FF6500] animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="w-2 h-2 rounded-full bg-[#FF6500] animate-bounce" style={{ animationDelay: '300ms' }}></div>
                           </div>
                         </div>
                       </div>

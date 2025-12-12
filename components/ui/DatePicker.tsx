@@ -115,14 +115,14 @@ export function DatePicker({ value, onChange, disabled }: DatePickerProps) {
                                     day: cn(
                                         'size-10 p-0 font-normal rounded-md text-sm text-gray-900',
                                         'hover:bg-gray-100 active:bg-gray-200',
-                                        'outline outline-offset-2 outline-0 focus-visible:outline-2 outline-[#8F6B43]'
+                                        'outline outline-offset-2 outline-0 focus-visible:outline-2 outline-[#FF6500]'
                                     ),
                                     day_selected: cn(
-                                        'bg-[#8F6B43] text-white',
-                                        'hover:bg-[#8F6B43] hover:text-white',
-                                        'focus:bg-[#8F6B43] focus:text-white'
+                                        'bg-[#FF6500] text-white',
+                                        'hover:bg-[#FF6500] hover:text-white',
+                                        'focus:bg-[#FF6500] focus:text-white'
                                     ),
-                                    day_today: 'font-semibold relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-[#8F6B43] after:rounded-full',
+                                    day_today: 'font-semibold relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-[#FF6500] after:rounded-full',
                                     day_outside: 'text-gray-400 opacity-50',
                                     day_disabled: 'text-gray-300 line-through opacity-50 cursor-not-allowed hover:bg-transparent',
                                     day_hidden: 'invisible',

@@ -1,0 +1,84 @@
+[dotenv@17.2.3] injecting env (8) from .env.local -- tip: ⚙️  suppress all logs with { quiet: true }
+
+--- Schema for table: coupons ---
+┌─────────┬───────────────────────┬───────────────────────────────┬─────────────┬─────────────────────┐
+│ (index) │ column_name           │ data_type                     │ is_nullable │ column_default      │
+├─────────┼───────────────────────┼───────────────────────────────┼─────────────┼─────────────────────┤
+│ 0       │ 'id'                  │ 'uuid'                        │ 'NO'        │ 'gen_random_uuid()' │
+│ 1       │ 'code'                │ 'text'                        │ 'NO'        │ null                │
+│ 2       │ 'description'         │ 'text'                        │ 'YES'       │ null                │
+│ 3       │ 'discount_type'       │ 'text'                        │ 'NO'        │ null                │
+│ 4       │ 'discount_value'      │ 'integer'                     │ 'NO'        │ null                │
+│ 5       │ 'min_order_amount'    │ 'integer'                     │ 'YES'       │ '0'                 │
+│ 6       │ 'max_discount_amount' │ 'integer'                     │ 'YES'       │ null                │
+│ 7       │ 'usage_limit'         │ 'integer'                     │ 'YES'       │ null                │
+│ 8       │ 'usage_count'         │ 'integer'                     │ 'NO'        │ '0'                 │
+│ 9       │ 'user_usage_limit'    │ 'integer'                     │ 'YES'       │ '1'                 │
+│ 10      │ 'valid_from'          │ 'timestamp without time zone' │ 'NO'        │ null                │
+│ 11      │ 'valid_until'         │ 'timestamp without time zone' │ 'NO'        │ null                │
+│ 12      │ 'is_active'           │ 'boolean'                     │ 'NO'        │ 'true'              │
+│ 13      │ 'created_at'          │ 'timestamp without time zone' │ 'NO'        │ 'now()'             │
+│ 14      │ 'updated_at'          │ 'timestamp without time zone' │ 'NO'        │ 'now()'             │
+└─────────┴───────────────────────┴───────────────────────────────┴─────────────┴─────────────────────┘
+
+--- Schema for table: hero_slides ---
+┌─────────┬──────────────────┬───────────────────────────────┬─────────────┬───────────────────────────────────────────┐
+│ (index) │ column_name      │ data_type                     │ is_nullable │ column_default                            │
+├─────────┼──────────────────┼───────────────────────────────┼─────────────┼───────────────────────────────────────────┤
+│ 0       │ 'id'             │ 'integer'                     │ 'NO'        │ "nextval('hero_slides_id_seq'::regclass)" │
+│ 1       │ 'tenant_id'      │ 'uuid'                        │ 'NO'        │ null                                      │
+│ 2       │ 'image'          │ 'text'                        │ 'NO'        │ null                                      │
+│ 3       │ 'title'          │ 'text'                        │ 'NO'        │ null                                      │
+│ 4       │ 'subtitle'       │ 'text'                        │ 'YES'       │ null                                      │
+│ 5       │ 'display_order'  │ 'integer'                     │ 'NO'        │ '0'                                       │
+│ 6       │ 'is_active'      │ 'boolean'                     │ 'NO'        │ 'true'                                    │
+│ 7       │ 'created_at'     │ 'timestamp without time zone' │ 'NO'        │ 'now()'                                   │
+│ 8       │ 'updated_at'     │ 'timestamp without time zone' │ 'NO'        │ 'now()'                                   │
+│ 9       │ 'subtitle_color' │ 'character varying'           │ 'YES'       │ "'#FFFFFF'::character varying"            │
+│ 10      │ 'title_color'    │ 'character varying'           │ 'YES'       │ "'#FFFFFF'::character varying"            │
+└─────────┴──────────────────┴───────────────────────────────┴─────────────┴───────────────────────────────────────────┘
+
+--- Schema for table: products ---
+┌─────────┬─────────────────┬───────────────────────────────┬─────────────┬──────────────────────┐
+│ (index) │ column_name     │ data_type                     │ is_nullable │ column_default       │
+├─────────┼─────────────────┼───────────────────────────────┼─────────────┼──────────────────────┤
+│ 0       │ 'id'            │ 'uuid'                        │ 'NO'        │ 'gen_random_uuid()'  │
+│ 1       │ 'tenant_id'     │ 'uuid'                        │ 'NO'        │ null                 │
+│ 2       │ 'category_id'   │ 'uuid'                        │ 'NO'        │ null                 │
+│ 3       │ 'title'         │ 'text'                        │ 'NO'        │ null                 │
+│ 4       │ 'slug'          │ 'text'                        │ 'NO'        │ null                 │
+│ 5       │ 'subtitle'      │ 'text'                        │ 'YES'       │ null                 │
+│ 6       │ 'description'   │ 'text'                        │ 'YES'       │ null                 │
+│ 7       │ 'image'         │ 'text'                        │ 'YES'       │ null                 │
+│ 8       │ 'base_price'    │ 'integer'                     │ 'NO'        │ '0'                  │
+│ 9       │ 'is_active'     │ 'boolean'                     │ 'NO'        │ 'true'               │
+│ 10      │ 'provider_name' │ 'text'                        │ 'YES'       │ "'My Moments'::text" │
+│ 11      │ 'provider_logo' │ 'text'                        │ 'YES'       │ null                 │
+│ 12      │ 'policy'        │ 'text'                        │ 'YES'       │ null                 │
+│ 13      │ 'created_at'    │ 'timestamp without time zone' │ 'NO'        │ 'now()'              │
+│ 14      │ 'updated_at'    │ 'timestamp without time zone' │ 'NO'        │ 'now()'              │
+│ 15      │ 'sale_price'    │ 'integer'                     │ 'YES'       │ '0'                  │
+│ 16      │ 'badge'         │ 'text'                        │ 'YES'       │ null                 │
+└─────────┴─────────────────┴───────────────────────────────┴─────────────┴──────────────────────┘
+
+--- Schema for table: orders ---
+┌─────────┬────────────────────┬───────────────────────────────┬─────────────┬─────────────────────┐
+│ (index) │ column_name        │ data_type                     │ is_nullable │ column_default      │
+├─────────┼────────────────────┼───────────────────────────────┼─────────────┼─────────────────────┤
+│ 0       │ 'id'               │ 'uuid'                        │ 'NO'        │ 'gen_random_uuid()' │
+│ 1       │ 'tenant_id'        │ 'uuid'                        │ 'NO'        │ null                │
+│ 2       │ 'product_id'       │ 'uuid'                        │ 'YES'       │ null                │
+│ 3       │ 'customer_name'    │ 'text'                        │ 'NO'        │ null                │
+│ 4       │ 'customer_phone'   │ 'text'                        │ 'NO'        │ null                │
+│ 5       │ 'date'             │ 'text'                        │ 'NO'        │ null                │
+│ 6       │ 'time'             │ 'text'                        │ 'NO'        │ null                │
+│ 7       │ 'area'             │ 'text'                        │ 'NO'        │ null                │
+│ 8       │ 'total_amount'     │ 'numeric'                     │ 'NO'        │ null                │
+│ 9       │ 'status'           │ 'text'                        │ 'NO'        │ "'pending'::text"   │
+│ 10      │ 'notes'            │ 'text'                        │ 'YES'       │ null                │
+│ 11      │ 'coupon_code'      │ 'text'                        │ 'YES'       │ null                │
+│ 12      │ 'discount'         │ 'numeric'                     │ 'YES'       │ "'0'::numeric"      │
+│ 13      │ 'selected_options' │ 'jsonb'                       │ 'YES'       │ "'{}'::jsonb"       │
+│ 14      │ 'created_at'       │ 'timestamp without time zone' │ 'NO'        │ 'now()'             │
+│ 15      │ 'updated_at'       │ 'timestamp without time zone' │ 'NO'        │ 'now()'             │
+└─────────┴────────────────────┴───────────────────────────────┴─────────────┴─────────────────────┘

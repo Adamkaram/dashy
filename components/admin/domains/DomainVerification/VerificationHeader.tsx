@@ -19,8 +19,6 @@ const regionLabels: Record<string, { label: string; flag: string }> = {
 }
 
 export function VerificationHeader({ domain, region, status, createdAt = "منذ 3 ساعات تقريبًا" }: VerificationHeaderProps) {
-    const regionInfo = regionLabels[region] || { label: region, flag: "🌍" }
-
     return (
         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between mb-8">
             <div className="flex items-center gap-6">
@@ -32,10 +30,10 @@ export function VerificationHeader({ domain, region, status, createdAt = "منذ
             </div>
 
             <div className="flex items-center gap-4">
-                <Button variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50">
+                <Button variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
                     إعادة التشغيل
                 </Button>
-                <Button variant="ghost" className="text-slate-500">
+                <Button variant="ghost" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100">
                     API
                 </Button>
             </div>

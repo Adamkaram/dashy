@@ -19,7 +19,10 @@ export default async function ProductDetailsRoute({ params }: ProductDetailsRout
         with: {
             category: true,
             images: true,
-        }
+            options: {
+                orderBy: (options, { asc }) => [asc(options.displayOrder)],
+            },
+        },
     });
 
     if (!product) {

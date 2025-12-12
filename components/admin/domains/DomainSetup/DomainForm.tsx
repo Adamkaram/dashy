@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select-shadcn"
 import { Button } from "@/components/ui/button"
-import { ChevronDown, Plus } from "lucide-react"
+import { ChevronDown, Plus, Loader2 } from "lucide-react"
 
 interface DomainFormProps {
     domain: string
@@ -12,6 +12,7 @@ interface DomainFormProps {
     region: string
     setRegion: (value: string) => void
     onSubmit: () => void
+    isLoading?: boolean
 }
 
 const regions = [
@@ -21,7 +22,7 @@ const regions = [
     { value: "ap-northeast-1", label: "آسيا - طوكيو", flag: "🇯🇵" },
 ]
 
-export function DomainForm({ domain, setDomain, region, setRegion, onSubmit }: DomainFormProps) {
+export function DomainForm({ domain, setDomain, region, setRegion, onSubmit, isLoading }: DomainFormProps) {
     const selectedRegion = regions.find(r => r.value === region) || regions[1]
 
     return (
@@ -34,14 +35,14 @@ export function DomainForm({ domain, setDomain, region, setRegion, onSubmit }: D
         >
             <div className="flex flex-col gap-2">
                 <Label htmlFor="domain" className="text-slate-700 text-sm flex items-center">
-                    الاسم
+                    النطاق
                 </Label>
                 <Input
                     id="domain"
-                    placeholder="mail.example.com"
+                    placeholder="shop.example.com"
                     value={domain}
                     onChange={(e) => setDomain(e.target.value)}
-                    className="border-slate-300 bg-white text-slate-900 focus-visible:ring-slate-400 transition ease-in-out duration-200 placeholder:text-slate-400 h-10 rounded-md px-3 text-base sm:text-sm"
+                    className="border-neutral-200 bg-white text-neutral-900 focus-visible:ring-[#FF6500]/20 focus-visible:border-[#FF6500] transition ease-in-out duration-200 placeholder:text-neutral-400 h-10 rounded-lg px-3 text-base sm:text-sm"
                     required
                     dir="ltr"
                 />
@@ -71,22 +72,22 @@ export function DomainForm({ domain, setDomain, region, setRegion, onSubmit }: D
                 </Select>
             </div>
 
-            <div className="flex flex-col gap-4">
-                <details className="group">
-                    <summary className="flex items-center gap-1 cursor-pointer">
-                        <ChevronDown className="w-4 h-4 text-slate-500 transition-transform group-open:rotate-180" />
-                        <span className="text-sm text-slate-500 hover:text-slate-700">خيارات متقدمة</span>
-                    </summary>
-                </details>
-            </div>
-
             <Button
                 type="submit"
-                className="bg-slate-900 text-white hover:bg-slate-800 font-semibold h-10"
-                disabled={!domain}
+                className="bg-gradient-to-r from-[#FF6500] to-[#FF4F0F] text-white hover:from-[#FF4F0F] hover:to-[#E55500] font-semibold h-10 shadow-md"
+                disabled={!domain || isLoading}
             >
-                <Plus className="w-4 h-4 ml-2" />
-                إضافة نطاق
+                {isLoading ? (
+                    <>
+                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                        جاري الإضافة...
+                    </>
+                ) : (
+                    <>
+                        <Plus className="w-4 h-4 ml-2" />
+                        إضافة نطاق
+                    </>
+                )}
             </Button>
         </form>
     )

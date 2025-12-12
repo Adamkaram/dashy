@@ -140,7 +140,7 @@ export default function HeroSlideFormPage() {
                             type="text"
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none transition-all"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none transition-all"
                             placeholder="مرحباً بكم في أرقى الذكريات"
                         />
                         {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title}</p>}
@@ -151,7 +151,7 @@ export default function HeroSlideFormPage() {
                             لون العنوان
                         </label>
                         <div className="flex flex-wrap items-center gap-3">
-                            {['#ECE8DB', '#F0EBE5', '#8F6B43', '#53131C', '#46423D', '#363533'].map((color) => (
+                            {['#FFF7ED', '#FFEDD5', '#FF6500', '#FF4F0F', '#46423D', '#363533'].map((color) => (
                                 <motion.button
                                     key={color}
                                     type="button"
@@ -190,7 +190,7 @@ export default function HeroSlideFormPage() {
                             type="text"
                             value={formData.subtitle}
                             onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none transition-all"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none transition-all"
                             placeholder="نجعل لحظاتكم لا تُنسى"
                         />
                     </div>
@@ -200,7 +200,7 @@ export default function HeroSlideFormPage() {
                             لون العنوان الفرعي
                         </label>
                         <div className="flex flex-wrap items-center gap-3">
-                            {['#ECE8DB', '#F0EBE5', '#8F6B43', '#53131C', '#46423D', '#363533'].map((color) => (
+                            {['#FFF7ED', '#FFEDD5', '#FF6500', '#FF4F0F', '#46423D', '#363533'].map((color) => (
                                 <motion.button
                                     key={color}
                                     type="button"
@@ -238,7 +238,7 @@ export default function HeroSlideFormPage() {
                         type="number"
                         value={formData.display_order}
                         onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none transition-all"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none transition-all"
                         placeholder="0"
                     />
                     {errors.display_order && <p className="text-sm text-red-600 mt-1">{errors.display_order}</p>}
@@ -252,7 +252,7 @@ export default function HeroSlideFormPage() {
                         id="is_active"
                         checked={formData.is_active}
                         onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                        className="w-4 h-4 text-[#8F6B43] border-gray-300 rounded focus:ring-[#8F6B43]"
+                        className="w-4 h-4 text-[#FF6500] border-gray-300 rounded focus:ring-[#FF6500]"
                     />
                     <label htmlFor="is_active" className="text-sm font-medium text-gray-700 select-none cursor-pointer">
                         نشط (يظهر في الصفحة الرئيسية)

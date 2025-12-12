@@ -13,6 +13,7 @@ import { UrbanVogueTheme } from './urban-vogue';
  */
 export const THEME_REGISTRY: ThemeRegistry = {
     'urban-vogue': UrbanVogueTheme,
+    'default': UrbanVogueTheme,
 };
 
 /**

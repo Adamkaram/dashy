@@ -61,10 +61,10 @@ export default async function ServiceDetails({ params }: { params: Promise<{ id:
     return (
         <div dir="rtl" className="min-h-screen" style={{ backgroundColor: 'var(--color-beige)' }}>
             {/* Page Header */}
-            <section className="sec-padding page service-details-page py-8" style={{ backgroundColor: '#F0EBE5' }}>
+            <section className="sec-padding page service-details-page py-8" style={{ backgroundColor: '#FFEDD5' }}>
                 <header className="py-5 bg-gradient-burgundy mb-8 rounded-xl mx-6 md:mx-12 shadow-lg">
                     <div className="container mx-auto px-8 md:px-16">
-                        <h4 className="text-base font-bold mb-2 text-[#8F6B43]">
+                        <h4 className="text-base font-bold mb-2 text-[#FF6500]">
                             {serviceTitle}
                         </h4>
 
@@ -116,11 +116,11 @@ export default async function ServiceDetails({ params }: { params: Promise<{ id:
                                         {service.provider_name || 'My Moments'}
                                     </span>
                                 </div>
-                                <h1 className="single-title text-2xl md:text-3xl font-bold text-[#8F6B43] tracking-tight leading-tight mt-4">
+                                <h1 className="single-title text-2xl md:text-3xl font-bold text-[#FF6500] tracking-tight leading-tight mt-4">
                                     {serviceTitle}
                                 </h1>
                             </div>
-                            <div className="h-px bg-gradient-to-r from-[#8F6B43]/20 to-transparent my-6" />
+                            <div className="h-px bg-gradient-to-r from-[#FF6500]/20 to-transparent my-6" />
 
                             {/* Payment Options */}
                             <div className="payment-options mb-8">
@@ -156,9 +156,9 @@ export default async function ServiceDetails({ params }: { params: Promise<{ id:
                             <div className="mb-8 px-2">
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <button className="flex items-center gap-2 text-[#8F6B43] hover:text-[#7a5a38] transition-colors text-sm font-medium group">
+                                        <button className="flex items-center gap-2 text-[#FF6500] hover:text-[#FF4F0F] transition-colors text-sm font-medium group">
                                             <Info className="w-4 h-4" />
-                                            <span className="border-b border-dashed border-[#8F6B43] group-hover:border-[#7a5a38]">
+                                            <span className="border-b border-dashed border-[#FF6500] group-hover:border-[#FF4F0F]">
                                                 سياسة البائع
                                             </span>
                                         </button>

@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Select } from '@/components/ui/Select';
-import { ArrowRight, Save } from 'lucide-react';
+import { ArrowRight, Save, FolderTree, FileText, Image as ImageIcon, Settings, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { InfoTooltip } from '@/components/ui/Tooltip';
 import ImageUpload from '@/components/admin/ImageUpload';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import { toast } from 'sonner';
 
 interface Category {
     id: string;
@@ -79,8 +80,6 @@ export default function CategoryFormPage() {
         try {
             const res = await fetch(`/api/admin/categories/${params.id}`);
             const data = await res.json();
-            console.log('Fetched category data:', data);
-            console.log('Image value:', data.image);
             setFormData({
                 slug: data.slug,
                 name: data.name,
@@ -92,6 +91,7 @@ export default function CategoryFormPage() {
             });
         } catch (error) {
             console.error('Failed to fetch category:', error);
+            toast.error('فشل في تحميل بيانات التصنيف');
         }
     };
 
@@ -99,30 +99,27 @@ export default function CategoryFormPage() {
     useEffect(() => {
         if (editor && formData.description) {
             const currentContent = editor.getHTML();
-            // Simple check: if editor is empty (just <p></p>) and formData has content, set it.
             if ((currentContent === '<p></p>' || currentContent === '') && formData.description !== '<p></p>') {
                 editor.commands.setContent(formData.description);
             }
         }
     }, [editor, formData.description]);
 
-
-
     const validate = () => {
         const newErrors: Record<string, string> = {};
-
         if (!formData.slug.trim()) newErrors.slug = 'Slug مطلوب';
         if (!formData.name.trim()) newErrors.name = 'الاسم مطلوب';
         if (formData.display_order < 0) newErrors.display_order = 'الترتيب يجب أن يكون موجباً';
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!validate()) return;
+        if (!validate()) {
+            toast.error('يرجى تصحيح الأخطاء في النموذج');
+            return;
+        }
 
         setLoading(true);
 
@@ -134,7 +131,7 @@ export default function CategoryFormPage() {
 
             const payload = {
                 ...formData,
-                parent_id: formData.parent_id || null, // Ensure empty string becomes null
+                parent_id: formData.parent_id || null,
             };
 
             const res = await fetch(url, {
@@ -149,10 +146,11 @@ export default function CategoryFormPage() {
                 throw new Error(data.error || 'فشل في حفظ التصنيف');
             }
 
+            toast.success(isEdit ? 'تم تحديث التصنيف بنجاح' : 'تم إضافة التصنيف بنجاح');
             router.push('/admin/categories');
             router.refresh();
         } catch (error: any) {
-            alert(error.message);
+            toast.error(error.message);
         } finally {
             setLoading(false);
         }
@@ -168,189 +166,257 @@ export default function CategoryFormPage() {
             <div className="flex items-center gap-4">
                 <Link
                     href="/admin/categories"
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2.5 hover:bg-neutral-100 rounded-lg transition-colors"
                 >
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-5 h-5 text-neutral-600" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">
+                    <h1 className="text-2xl font-bold text-neutral-900">
                         {isEdit ? 'تعديل التصنيف' : 'إضافة تصنيف جديد'}
                     </h1>
-                    <p className="text-gray-600 mt-1">
-                        {isEdit ? 'تحديث بيانات التصنيف' : 'إضافة تصنيف جديد للخدمات'}
+                    <p className="text-neutral-500 mt-1 text-sm">
+                        {isEdit ? 'تحديث بيانات التصنيف' : 'إضافة تصنيف جديد للمنتجات'}
                     </p>
                 </div>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
-                {/* Slug */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        Slug (للرابط) <span className="text-red-500">*</span>
-                        <InfoTooltip
-                            content="الـ Slug هو الجزء الذي يظهر في رابط الصفحة (URL). مثال: category-slug سيصبح الرابط: /categories/category-slug"
-                            side="left"
+            <form onSubmit={handleSubmit} className="space-y-6">
+
+                {/* Basic Info Section */}
+                <div className="bg-white rounded-xl border border-neutral-200 shadow-sm">
+                    <div className="p-4 border-b border-neutral-100 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#FF6500] to-[#FF4F0F] rounded-lg flex items-center justify-center">
+                            <FolderTree className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-semibold text-neutral-800">المعلومات الأساسية</h3>
+                            <p className="text-xs text-neutral-500">الاسم و Slug والتصنيف الأب</p>
+                        </div>
+                    </div>
+
+                    <div className="p-6 space-y-5">
+                        {/* Name & Slug Grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Name */}
+                            <div>
+                                <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                                    الاسم <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full px-3 py-2.5 bg-white border border-neutral-200 rounded-lg outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-sm transition-all"
+                                    placeholder="اسم التصنيف"
+                                />
+                                {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name}</p>}
+                            </div>
+
+                            {/* Slug */}
+                            <div>
+                                <label className="block text-xs font-medium text-neutral-600 mb-1.5 flex items-center gap-1.5">
+                                    Slug (للرابط) <span className="text-red-500">*</span>
+                                    <InfoTooltip
+                                        content="الـ Slug هو الجزء الذي يظهر في رابط الصفحة (URL)"
+                                        side="left"
+                                    />
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.slug}
+                                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                    className="w-full px-3 py-2.5 bg-white border border-neutral-200 rounded-lg outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-sm transition-all font-mono"
+                                    placeholder="category-slug"
+                                    dir="ltr"
+                                />
+                                {errors.slug && <p className="text-xs text-red-600 mt-1">{errors.slug}</p>}
+                            </div>
+                        </div>
+
+                        {/* Parent Category & Display Order Grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Parent Category */}
+                            <div>
+                                <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                                    التصنيف الأب (اختياري)
+                                </label>
+                                <Select
+                                    value={formData.parent_id}
+                                    onChange={(value) => setFormData({ ...formData, parent_id: value })}
+                                    options={[
+                                        { value: '', label: 'بدون (تصنيف رئيسي)' },
+                                        ...categories.filter(c => !c.parent_id).map((cat) => ({
+                                            value: cat.id,
+                                            label: cat.name
+                                        }))
+                                    ]}
+                                    placeholder="اختر التصنيف الأب"
+                                    className="!h-[42px]"
+                                />
+                                <p className="text-[10px] text-neutral-400 mt-1">اختر تصنيفاً رئيسياً إذا كان هذا تصنيفاً فرعياً</p>
+                            </div>
+
+                            {/* Display Order */}
+                            <div>
+                                <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                                    ترتيب العرض
+                                </label>
+                                <input
+                                    type="number"
+                                    value={formData.display_order}
+                                    onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+                                    className="w-full px-3 py-2.5 bg-white border border-neutral-200 rounded-lg outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-sm transition-all"
+                                    placeholder="0"
+                                />
+                                {errors.display_order && <p className="text-xs text-red-600 mt-1">{errors.display_order}</p>}
+                                <p className="text-[10px] text-neutral-400 mt-1">الأرقام الأصغر تظهر أولاً</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Image Section */}
+                <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
+                    <div className="p-4 border-b border-neutral-100 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-violet-600 rounded-lg flex items-center justify-center">
+                            <ImageIcon className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-semibold text-neutral-800">صورة التصنيف</h3>
+                            <p className="text-xs text-neutral-500">صورة تمثيلية للتصنيف</p>
+                        </div>
+                    </div>
+
+                    <div className="p-6">
+                        <ImageUpload
+                            value={formData.image}
+                            onChange={(url) => setFormData({ ...formData, image: url })}
+                            label=""
                         />
-                    </label>
-                    <input
-                        type="text"
-                        value={formData.slug}
-                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none"
-                        placeholder="category-slug"
-                        dir="ltr"
-                    />
-                    {errors.slug && <p className="text-sm text-red-600 mt-1">{errors.slug}</p>}
-                    <p className="text-sm text-gray-500 mt-1">يستخدم في الرابط (URL)</p>
+                    </div>
                 </div>
 
+                {/* Description Section */}
+                <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
+                    <div className="p-4 border-b border-neutral-100 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                            <FileText className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-semibold text-neutral-800">الوصف</h3>
+                            <p className="text-xs text-neutral-500">وصف تفصيلي للتصنيف (اختياري)</p>
+                        </div>
+                    </div>
 
-                {/* Name */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        الاسم <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none"
-                        placeholder="اسم التصنيف"
-                    />
-                    {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
-                </div>
-
-                {/* Parent Category */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        التصنيف الأب (اختياري)
-                    </label>
-                    <Select
-                        value={formData.parent_id}
-                        onChange={(value) => setFormData({ ...formData, parent_id: value })}
-                        options={[
-                            { value: '', label: 'بدون (تصنيف رئيسي)' },
-                            ...categories.filter(c => !c.parent_id).map((cat) => ({
-                                value: cat.id,
-                                label: cat.name
-                            }))
-                        ]}
-                        placeholder="اختر التصنيف الأب"
-                    />
-                    <p className="text-sm text-gray-500 mt-1">اختر تصنيفاً رئيسياً إذا كان هذا تصنيفاً فرعياً</p>
-                </div>
-
-                {/* Image */}
-                <div>
-                    <ImageUpload
-                        value={formData.image}
-                        onChange={(url) => setFormData({ ...formData, image: url })}
-                        label="صورة التصنيف"
-                    />
-                </div>
-
-                {/* Description */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        الوصف
-                    </label>
-                    <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
-                        <div className="tiptap-toolbar border-b border-gray-200 p-2 flex gap-1 flex-wrap">
+                    <div className="border-b border-neutral-100">
+                        <div className="p-2 flex gap-1 flex-wrap bg-neutral-50">
                             <button
                                 type="button"
                                 onClick={() => editor?.chain().focus().toggleBold().run()}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${editor?.isActive('bold') ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
+                                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${editor?.isActive('bold') ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-100 border border-neutral-200'}`}
                             >
                                 <strong>B</strong>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => editor?.chain().focus().toggleItalic().run()}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${editor?.isActive('italic') ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
+                                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${editor?.isActive('italic') ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-100 border border-neutral-200'}`}
                             >
                                 <em>I</em>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${editor?.isActive('heading', { level: 2 }) ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
+                                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${editor?.isActive('heading', { level: 2 }) ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-100 border border-neutral-200'}`}
                             >
                                 H2
                             </button>
                             <button
                                 type="button"
                                 onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${editor?.isActive('bulletList') ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
+                                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${editor?.isActive('bulletList') ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-100 border border-neutral-200'}`}
                             >
                                 • List
                             </button>
                             <button
                                 type="button"
                                 onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-                                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${editor?.isActive('orderedList') ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
+                                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${editor?.isActive('orderedList') ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-100 border border-neutral-200'}`}
                             >
                                 1. List
                             </button>
                         </div>
-                        <EditorContent
-                            editor={editor}
-                            className="prose prose-sm max-w-none p-4 min-h-[150px] focus:outline-none"
-                        />
+                    </div>
+                    <EditorContent
+                        editor={editor}
+                        className="prose prose-sm max-w-none p-4 min-h-[120px] focus:outline-none"
+                    />
+                </div>
+
+                {/* Settings Section */}
+                <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
+                    <div className="p-4 border-b border-neutral-100 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-neutral-600 to-neutral-700 rounded-lg flex items-center justify-center">
+                            <Settings className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-semibold text-neutral-800">الإعدادات</h3>
+                            <p className="text-xs text-neutral-500">حالة التصنيف</p>
+                        </div>
+                    </div>
+
+                    <div className="p-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-col">
+                                <span className="text-sm font-medium text-neutral-900">حالة التصنيف</span>
+                                <span className="text-xs text-neutral-500">التحكم في ظهور التصنيف في الموقع</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}
+                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF6500]/20 ${formData.is_active ? 'bg-[#FF6500]' : 'bg-neutral-200'
+                                        }`}
+                                >
+                                    <span
+                                        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${formData.is_active ? '-translate-x-5' : '-translate-x-0.5'
+                                            }`}
+                                    />
+                                </button>
+                                <span className="text-sm font-medium text-neutral-700 flex items-center gap-1.5">
+                                    {formData.is_active ? (
+                                        <>
+                                            <Eye className="w-4 h-4 text-green-600" />
+                                            نشط
+                                        </>
+                                    ) : (
+                                        <>
+                                            <EyeOff className="w-4 h-4 text-neutral-400" />
+                                            مخفي
+                                        </>
+                                    )}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Display Order */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        ترتيب العرض
-                    </label>
-                    <input
-                        type="number"
-                        value={formData.display_order}
-                        onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none"
-                        placeholder="0"
-                    />
-                    {errors.display_order && <p className="text-sm text-red-600 mt-1">{errors.display_order}</p>}
-                    <p className="text-sm text-gray-500 mt-1">الأرقام الأصغر تظهر أولاً</p>
-                </div>
-
-                {/* Is Active */}
-                <div className="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        id="is_active"
-                        checked={formData.is_active}
-                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                        className="w-4 h-4 text-[#8F6B43] border-gray-300 rounded focus:ring-[#8F6B43]"
-                    />
-                    <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
-                        نشط
-                    </label>
-                </div>
-
-                {/* Actions */}
-                {/* Actions */}
-                <div className="sticky bottom-0 -mx-6 -mb-6 p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 flex items-center justify-end gap-3 rounded-b-lg z-10">
+                {/* Sticky Footer */}
+                <div className="sticky bottom-0 -mx-6 p-4 bg-white/90 backdrop-blur-md border-t border-neutral-200 flex items-center justify-end gap-3 rounded-b-xl z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                     <Link
                         href="/admin/categories"
-                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all"
+                        className="px-5 py-2.5 text-sm font-medium text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-lg transition-all"
                     >
                         إلغاء
                     </Link>
                     <button
                         type="submit"
                         disabled={loading}
-                        className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all disabled:opacity-50 font-medium text-sm shadow-sm hover:shadow-md"
+                        className="flex items-center gap-2 bg-gradient-to-r from-[#FF6500] to-[#FF4F0F] text-white px-5 py-2.5 rounded-lg hover:from-[#FF4F0F] hover:to-[#E55500] transition-all disabled:opacity-50 font-medium text-sm shadow-md hover:shadow-lg"
                     >
                         <Save className="w-4 h-4" />
-                        <span>{loading ? 'جاري الحفظ...' : 'حفظ التغييرات'}</span>
+                        <span>{loading ? 'جاري الحفظ...' : (isEdit ? 'حفظ التغييرات' : 'إضافة التصنيف')}</span>
                     </button>
                 </div>
             </form>

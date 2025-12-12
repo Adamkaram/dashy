@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertTriangle, LoaderCircle } from "lucide-react"
+import { LoaderCircle } from "lucide-react"
 
 interface WarningAlertProps {
     title: string
@@ -9,12 +9,12 @@ interface WarningAlertProps {
 
 export function WarningAlert({ title, description }: WarningAlertProps) {
     return (
-        <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-                <LoaderCircle className="w-5 h-5 text-amber-600 mt-0.5 animate-spin" />
+                <LoaderCircle className="w-5 h-5 text-yellow-500 mt-0.5 animate-spin" />
                 <div>
-                    <p className="text-amber-900 font-medium text-sm">{title}</p>
-                    <p className="text-amber-700 text-sm mt-1">{description}</p>
+                    <p className="text-yellow-800 font-medium text-sm">{title}</p>
+                    <p className="text-yellow-700 text-sm mt-1">{description}</p>
                 </div>
             </div>
         </div>

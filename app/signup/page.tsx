@@ -42,11 +42,11 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#F0EBE5]" dir="rtl">
+        <div className="min-h-screen flex items-center justify-center bg-[#FFEDD5]" dir="rtl">
             <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#E6DCCF]">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-[#53131C] mb-2">إنشاء حساب جديد</h1>
-                    <p className="text-[#8F6B43]">انضم إلينا في ماى مومنت</p>
+                    <h1 className="text-3xl font-bold text-[#FF4F0F] mb-2">إنشاء حساب جديد</h1>
+                    <p className="text-[#FF6500]">انضم إلينا في ماى مومنت</p>
                 </div>
 
                 <form onSubmit={handleSignup} className="space-y-6">
@@ -58,7 +58,7 @@ export default function SignupPage() {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full px-4 py-3 border border-[#E6DCCF] rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none transition-all bg-[#FAF9F7]"
+                            className="w-full px-4 py-3 border border-[#E6DCCF] rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none transition-all bg-[#FAF9F7]"
                             placeholder="الاسم"
                             required
                         />
@@ -72,7 +72,7 @@ export default function SignupPage() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-3 border border-[#E6DCCF] rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none transition-all bg-[#FAF9F7]"
+                            className="w-full px-4 py-3 border border-[#E6DCCF] rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none transition-all bg-[#FAF9F7]"
                             placeholder="name@example.com"
                             required
                             dir="ltr"
@@ -87,7 +87,7 @@ export default function SignupPage() {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 border border-[#E6DCCF] rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none transition-all bg-[#FAF9F7]"
+                            className="w-full px-4 py-3 border border-[#E6DCCF] rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none transition-all bg-[#FAF9F7]"
                             placeholder="••••••••"
                             required
                             dir="ltr"
@@ -103,7 +103,7 @@ export default function SignupPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-[#53131C] text-white py-3 rounded-lg hover:bg-[#6b1a26] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center font-medium shadow-md hover:shadow-lg transform active:scale-[0.98] duration-200"
+                        className="w-full bg-[#FF4F0F] text-white py-3 rounded-lg hover:bg-[#6b1a26] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center font-medium shadow-md hover:shadow-lg transform active:scale-[0.98] duration-200"
                     >
                         {loading ? (
                             <>
@@ -116,10 +116,10 @@ export default function SignupPage() {
                     </button>
                 </form>
 
-                <div className="mt-6 text-center text-sm text-[#8F6B43]">
+                <div className="mt-6 text-center text-sm text-[#FF6500]">
                     <p>
                         لديك حساب بالفعل؟{' '}
-                        <Link href="/login" className="font-bold hover:underline hover:text-[#53131C] transition-colors">
+                        <Link href="/login" className="font-bold hover:underline hover:text-[#FF4F0F] transition-colors">
                             تسجيل الدخول
                         </Link>
                     </p>

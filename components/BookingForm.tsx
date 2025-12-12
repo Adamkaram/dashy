@@ -415,19 +415,19 @@ export default function BookingForm({
                             </div>
 
                             {couponError && (
-                                <div className="mt-3 p-3 bg-[#53131C]/10 border border-[#53131C]/30 rounded-lg flex items-start gap-2">
-                                    <svg className="w-5 h-5 text-[#53131C] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className="mt-3 p-3 bg-[#FF4F0F]/10 border border-[#FF4F0F]/30 rounded-lg flex items-start gap-2">
+                                    <svg className="w-5 h-5 text-[#FF4F0F] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <p className="text-sm text-[#53131C] font-medium">{couponError}</p>
+                                    <p className="text-sm text-[#FF4F0F] font-medium">{couponError}</p>
                                 </div>
                             )}
 
                             {couponApplied && (
-                                <div className="mt-4 p-5 bg-gradient-to-br from-[#ECE8DB] to-[#F0EBE5] border-2 border-[#8F6B43] rounded-[15px] shadow-lg">
+                                <div className="mt-4 p-5 bg-gradient-to-br from-[#FFF7ED] to-[#FFEDD5] border-2 border-[#FF6500] rounded-[15px] shadow-lg">
                                     <div className="flex items-center mb-3">
-                                        <i className="bi bi-check-circle-fill text-[#8F6B43] text-xl ml-2"></i>
-                                        <strong className="text-[#53131C] text-lg">تم تطبيق الكوبون</strong>
+                                        <i className="bi bi-check-circle-fill text-[#FF6500] text-xl ml-2"></i>
+                                        <strong className="text-[#FF4F0F] text-lg">تم تطبيق الكوبون</strong>
                                     </div>
                                     <div className="grid md:grid-cols-2 gap-4 mb-3">
                                         <div>
@@ -438,7 +438,7 @@ export default function BookingForm({
                                         </div>
                                         <div>
                                             <span className="text-[#666] text-sm">الخصم:</span>
-                                            <div className="text-[#53131C] font-semibold text-base">
+                                            <div className="text-[#FF4F0F] font-semibold text-base">
                                                 {discount}.000 د.ك
                                             </div>
                                         </div>
@@ -472,7 +472,7 @@ export default function BookingForm({
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full h-14 bg-gradient-to-r from-[#46423D] to-[#966428] hover:from-[#363533] hover:to-[#7a5a38] text-white text-lg font-bold rounded-xl transition-all shadow-lg shadow-[#46423D]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full h-14 bg-gradient-to-r from-[#46423D] to-[#966428] hover:from-[#363533] hover:to-[#FF4F0F] text-white text-lg font-bold rounded-xl transition-all shadow-lg shadow-[#46423D]/20 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? 'جاري الإرسال...' : 'تأكيد الحجز'}
                             </button>

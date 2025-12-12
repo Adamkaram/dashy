@@ -183,7 +183,7 @@ export default function CouponsPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8F6B43]"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF6500]"></div>
             </div>
         );
     }
@@ -229,7 +229,7 @@ export default function CouponsPage() {
                                 {/* Code */}
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
-                                        <code className="text-lg font-bold text-[#8F6B43] bg-[#ECE8DB] px-3 py-1 rounded-lg">
+                                        <code className="text-lg font-bold text-[#FF6500] bg-[#FFF7ED] px-3 py-1 rounded-lg">
                                             {coupon.code}
                                         </code>
                                         <button
@@ -262,11 +262,12 @@ export default function CouponsPage() {
                                 </div>
 
                                 {/* Discount */}
+                                {/* Discount */}
                                 <div className="mb-4">
                                     <p className="text-2xl font-bold text-gray-900">
                                         {coupon.discount_type === 'percentage'
                                             ? `${coupon.discount_value}%`
-                                            : `${coupon.discount_value} د.ك`}
+                                            : `${coupon.discount_value} EGP`}
                                     </p>
                                     <p className="text-xs text-gray-500">
                                         {coupon.discount_type === 'percentage' ? 'خصم نسبي' : 'خصم ثابت'}
@@ -274,29 +275,35 @@ export default function CouponsPage() {
                                 </div>
 
                                 {/* Stats */}
-                                <div className="space-y-2 mb-4 text-sm">
-                                    {coupon.min_order_amount > 0 && (
-                                        <div className="flex justify-between text-gray-600">
-                                            <span>الحد الأدنى:</span>
-                                            <span className="font-medium">{coupon.min_order_amount} د.ك</span>
-                                        </div>
-                                    )}
-                                    {coupon.usage_limit && (
-                                        <div className="flex justify-between text-gray-600">
-                                            <span>الاستخدام:</span>
-                                            <span className="font-medium">
-                                                {coupon.used_count} / {coupon.usage_limit}
-                                            </span>
-                                        </div>
-                                    )}
-                                    {coupon.expires_at && (
-                                        <div className="flex justify-between text-gray-600">
-                                            <span>ينتهي:</span>
-                                            <span className="font-medium">
-                                                {new Date(coupon.expires_at).toLocaleDateString('ar-KW')}
-                                            </span>
-                                        </div>
-                                    )}
+                                < div className="space-y-2 mb-4 text-sm" >
+                                    {
+                                        coupon.min_order_amount > 0 && (
+                                            <div className="flex justify-between text-gray-600">
+                                                <span>الحد الأدنى:</span>
+                                                <span className="font-medium">{coupon.min_order_amount} EGP</span>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        coupon.usage_limit && (
+                                            <div className="flex justify-between text-gray-600">
+                                                <span>الاستخدام:</span>
+                                                <span className="font-medium">
+                                                    {coupon.used_count} / {coupon.usage_limit}
+                                                </span>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        coupon.expires_at && (
+                                            <div className="flex justify-between text-gray-600">
+                                                <span>ينتهي:</span>
+                                                <span className="font-medium">
+                                                    {new Date(coupon.expires_at).toLocaleDateString('ar-KW')}
+                                                </span>
+                                            </div>
+                                        )
+                                    }
                                 </div>
 
                                 {/* Actions */}
@@ -317,167 +324,170 @@ export default function CouponsPage() {
                                 </div>
                             </motion.div>
                         ))
-                    )}
-                </AnimatePresence>
-            </div>
+                    )
+                    }
+                </AnimatePresence >
+            </div >
 
             {/* Modal */}
             <AnimatePresence>
-                {showModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-                        >
-                            <div className="p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
-                                <h2 className="text-xl font-bold text-gray-800">
-                                    {editingCoupon ? 'تعديل الكوبون' : 'إضافة كوبون جديد'}
-                                </h2>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                                {/* Code */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        كود الكوبون <span className="text-red-600">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.code}
-                                        onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none"
-                                        required
-                                        placeholder="SUMMER2024"
-                                    />
+                {
+                    showModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                            >
+                                <div className="p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+                                    <h2 className="text-xl font-bold text-gray-800">
+                                        {editingCoupon ? 'تعديل الكوبون' : 'إضافة كوبون جديد'}
+                                    </h2>
                                 </div>
 
-                                {/* Discount Type & Value */}
-                                <div className="grid grid-cols-2 gap-4">
+                                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                                    {/* Code */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            نوع الخصم <span className="text-red-600">*</span>
-                                        </label>
-                                        <Select
-                                            value={formData.discount_type}
-                                            onChange={(value) => setFormData({ ...formData, discount_type: value as 'percentage' | 'fixed' })}
-                                            options={[
-                                                { value: 'percentage', label: 'نسبة مئوية (%)' },
-                                                { value: 'fixed', label: 'مبلغ ثابت (د.ك)' },
-                                            ]}
-                                            placeholder="اختر نوع الخصم"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            قيمة الخصم <span className="text-red-600">*</span>
+                                            كود الكوبون <span className="text-red-600">*</span>
                                         </label>
                                         <input
-                                            type="number"
-                                            step="0.01"
-                                            value={formData.discount_value}
-                                            onChange={(e) => setFormData({ ...formData, discount_value: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none"
+                                            type="text"
+                                            value={formData.code}
+                                            onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none"
                                             required
-                                            placeholder={formData.discount_type === 'percentage' ? '10' : '5'}
+                                            placeholder="SUMMER2024"
                                         />
                                     </div>
-                                </div>
 
-                                {/* Min Order & Max Discount */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            الحد الأدنى للطلب (د.ك)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            value={formData.min_order_amount}
-                                            onChange={(e) => setFormData({ ...formData, min_order_amount: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none"
-                                            placeholder="0"
-                                        />
-                                    </div>
-                                    {formData.discount_type === 'percentage' && (
+                                    {/* Discount Type & Value */}
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                الحد الأقصى للخصم (د.ك)
+                                                نوع الخصم <span className="text-red-600">*</span>
+                                            </label>
+                                            <Select
+                                                value={formData.discount_type}
+                                                onChange={(value) => setFormData({ ...formData, discount_type: value as 'percentage' | 'fixed' })}
+                                                options={[
+                                                    { value: 'percentage', label: 'نسبة مئوية (%)' },
+                                                    { value: 'fixed', label: 'مبلغ ثابت (EGP)' },
+                                                ]}
+                                                placeholder="اختر نوع الخصم"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                قيمة الخصم <span className="text-red-600">*</span>
                                             </label>
                                             <input
                                                 type="number"
                                                 step="0.01"
-                                                value={formData.max_discount}
-                                                onChange={(e) => setFormData({ ...formData, max_discount: e.target.value })}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none"
+                                                value={formData.discount_value}
+                                                onChange={(e) => setFormData({ ...formData, discount_value: e.target.value })}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none"
+                                                required
+                                                placeholder={formData.discount_type === 'percentage' ? '10' : '5'}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Min Order & Max Discount */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                الحد الأدنى للطلب (EGP)
+                                            </label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={formData.min_order_amount}
+                                                onChange={(e) => setFormData({ ...formData, min_order_amount: e.target.value })}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        {formData.discount_type === 'percentage' && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    الحد الأقصى للخصم (EGP)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={formData.max_discount}
+                                                    onChange={(e) => setFormData({ ...formData, max_discount: e.target.value })}
+                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none"
+                                                    placeholder="غير محدد"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Usage Limit & Expiry */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                حد الاستخدام
+                                            </label>
+                                            <input
+                                                type="number"
+                                                value={formData.usage_limit}
+                                                onChange={(e) => setFormData({ ...formData, usage_limit: e.target.value })}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none"
                                                 placeholder="غير محدد"
                                             />
                                         </div>
-                                    )}
-                                </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                تاريخ الانتهاء
+                                            </label>
+                                            <DatePicker
+                                                value={formData.expires_at ? new Date(formData.expires_at) : undefined}
+                                                onChange={(date) => setFormData({ ...formData, expires_at: date ? date.toISOString().split('T')[0] : '' })}
+                                                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                                            />
+                                        </div>
+                                    </div>
 
-                                {/* Usage Limit & Expiry */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            حد الاستخدام
-                                        </label>
+                                    {/* Active Toggle */}
+                                    <div className="flex items-center gap-2">
                                         <input
-                                            type="number"
-                                            value={formData.usage_limit}
-                                            onChange={(e) => setFormData({ ...formData, usage_limit: e.target.value })}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none"
-                                            placeholder="غير محدد"
+                                            type="checkbox"
+                                            id="is_active"
+                                            checked={formData.is_active}
+                                            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                            className="w-4 h-4 text-[#FF6500] border-gray-300 rounded focus:ring-[#FF6500]"
                                         />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            تاريخ الانتهاء
+                                        <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
+                                            كوبون نشط
                                         </label>
-                                        <DatePicker
-                                            value={formData.expires_at ? new Date(formData.expires_at) : undefined}
-                                            onChange={(date) => setFormData({ ...formData, expires_at: date ? date.toISOString().split('T')[0] : '' })}
-                                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                                        />
                                     </div>
-                                </div>
 
-                                {/* Active Toggle */}
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        id="is_active"
-                                        checked={formData.is_active}
-                                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                                        className="w-4 h-4 text-[#8F6B43] border-gray-300 rounded focus:ring-[#8F6B43]"
-                                    />
-                                    <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
-                                        كوبون نشط
-                                    </label>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex gap-3 pt-4">
-                                    <button
-                                        type="submit"
-                                        className="flex-1 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium"
-                                    >
-                                        {editingCoupon ? 'تحديث' : 'إضافة'}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={closeModal}
-                                        className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                                    >
-                                        إلغاء
-                                    </button>
-                                </div>
-                            </form>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
-        </div>
+                                    {/* Actions */}
+                                    <div className="flex gap-3 pt-4">
+                                        <button
+                                            type="submit"
+                                            className="flex-1 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                                        >
+                                            {editingCoupon ? 'تحديث' : 'إضافة'}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={closeModal}
+                                            className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                                        >
+                                            إلغاء
+                                        </button>
+                                    </div>
+                                </form>
+                            </motion.div>
+                        </div>
+                    )
+                }
+            </AnimatePresence >
+        </div >
     );
 }

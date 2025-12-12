@@ -75,15 +75,15 @@ export default function DomainVerification({ domain, region }: DomainVerificatio
                 {/* DNS Records Section */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-slate-900">سجلات DNS</h2>
+                        <h2 className="text-xl font-bold text-slate-800">سجلات DNS</h2>
                         <div className="flex items-center gap-3">
-                            <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-700">
+                            <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100">
                                 تسجيل الدخول إلى Cloudflare
                             </Button>
-                            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600">
+                            <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100">
                                 <Copy className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600">
+                            <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100">
                                 <Mail className="w-4 h-4" />
                             </Button>
                         </div>

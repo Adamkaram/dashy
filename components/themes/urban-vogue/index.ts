@@ -14,6 +14,8 @@ import NotFound from './NotFound/NotFound';
 import CategoryCard from './CategoryCard/CategoryCard';
 import ServiceCard from './ServiceCard/ServiceCard';
 import AddToCartNotification from './Notifications/AddToCartNotification';
+import Toast from './Notifications/Toast';
+import OrderSuccessToast from './Notifications/OrderSuccessToast';
 import config from './theme.config';
 
 export const UrbanVogueTheme: Theme = {
@@ -38,6 +40,8 @@ export const UrbanVogueTheme: Theme = {
         Error,
         NotFound,
         AddToCartNotification,
+        Toast,
+        OrderSuccessToast,
     },
 
     config,

@@ -46,13 +46,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
     ) as string[];
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: '#F0EBE5' }} dir="rtl">
+        <div className="min-h-screen" style={{ backgroundColor: '#FFEDD5' }} dir="rtl">
             {/* Main Content Section */}
             <section className="sec-padding page sub-category-page py-8" style={{ backgroundColor: '#0f0e0cff' }}>
                 {/* Page Header */}
                 <header className="py-5 bg-gradient-burgundy mb-8 rounded-xl mx-6 md:mx-12 shadow-lg">
                     <div className="container mx-auto px-8 md:px-16">
-                        <h4 className="text-base font-bold mb-2 text-[#8F6B43]">
+                        <h4 className="text-base font-bold mb-2 text-[#FF6500]">
                             {category.name}
                         </h4>
 

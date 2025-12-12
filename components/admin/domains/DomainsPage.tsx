@@ -1,86 +1,317 @@
 "use client"
 
-import { Search, ChevronDown, Plus, Download, Code } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { useState, useMemo, CSSProperties, ReactNode } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+    Search, Plus, Globe, ExternalLink, CheckCircle2, AlertTriangle, Clock,
+    MoreHorizontal, Trash2, RefreshCw, Copy, ArrowUpRight, MousePointer2
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { Input } from "@/components/ui/input"
 import DomainSetup from "./DomainSetup"
+import DomainCard from "./DomainCard"
+import { toast } from "sonner"
+import { cn } from "@/lib/utils"
+import { useDomains, useDomainActions, type Domain } from "@/hooks/use-domains"
+
+// Animated Empty State Component (Dub Style)
+function AnimatedEmptyState({
+    title,
+    description,
+    cardContent,
+    cardCount = 3,
+    addButton,
+}: {
+    title: string
+    description: ReactNode
+    cardContent: ReactNode | ((index: number) => ReactNode)
+    cardCount?: number
+    addButton?: ReactNode
+}) {
+    return (
+        <div className="flex flex-col items-center justify-center gap-6 rounded-xl border border-neutral-200 bg-white px-4 py-10 md:min-h-[500px]">
+            {/* Animated Cards */}
+            <div className="h-36 w-full max-w-64 overflow-hidden px-4 [mask-image:linear-gradient(transparent,black_10%,black_90%,transparent)]">
+                <div
+                    style={{ "--scroll": "-50%" } as CSSProperties}
+                    className="flex flex-col animate-[infinite-scroll-y_10s_linear_infinite]"
+                >
+                    {[...Array(cardCount * 2)].map((_, idx) => (
+                        <div
+                            key={idx}
+                            className="mt-4 flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4 shadow-[0_4px_12px_0_rgba(0,0,0,0.05)]"
+                        >
+                            {typeof cardContent === "function"
+                                ? cardContent(idx % cardCount)
+                                : cardContent}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Text Content */}
+            <div className="max-w-sm text-pretty text-center">
+                <span className="text-base font-medium text-neutral-900">{title}</span>
+                <div className="mt-2 text-pretty text-sm text-neutral-500">
+                    {description}
+                </div>
+            </div>
+
+            {/* Add Button */}
+            <div className="flex items-center gap-2">
+                {addButton}
+            </div>
+        </div>
+    )
+}
+
+// Domain Card Placeholder
+function DomainCardPlaceholder() {
+    return (
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 animate-pulse">
+            <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-neutral-200 rounded-lg" />
+                <div className="flex-1">
+                    <div className="h-4 w-32 bg-neutral-200 rounded" />
+                    <div className="h-3 w-20 bg-neutral-100 rounded mt-2" />
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const containerVariants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.05 } },
+}
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } },
+}
 
 export default function DomainsPage() {
     const [showAddDomain, setShowAddDomain] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
+    const [statusFilter, setStatusFilter] = useState<'all' | 'verified' | 'pending'>('all')
+    const [openMenu, setOpenMenu] = useState<string | null>(null)
+
+    // Use SWR hooks for data fetching
+    const { domains: allDomains, loading, mutate } = useDomains()
+    const { deleteDomain, verifyDomain, updateDomain, setPrimaryDomain } = useDomainActions()
+
+    // Map domains to include status field
+    const domains = useMemo(() =>
+        allDomains.map(d => ({
+            ...d,
+            status: d.verified ? 'verified' as const : 'pending' as const,
+        })),
+        [allDomains]
+    )
+
+    const handleDelete = async (domain: any) => {
+        if (!confirm(`هل تريد حذف النطاق ${domain.domain}؟`)) return
+
+        try {
+            await deleteDomain(domain.id)
+            toast.success('تم حذف النطاق بنجاح')
+        } catch (error) {
+            toast.error('فشل في حذف النطاق')
+        }
+    }
+
+    const handleVerify = async (domain: any) => {
+        try {
+            const result = await verifyDomain(domain.id)
+            if (result.verified) {
+                toast.success('تم التحقق من النطاق بنجاح!')
+            } else {
+                toast.info('لم يتم العثور على سجل DNS بعد. يرجى الانتظار.')
+            }
+        } catch (error) {
+            toast.error('حدث خطأ أثناء التحقق')
+        }
+    }
+
+    const handleSetPrimary = async (domain: any) => {
+        try {
+            await setPrimaryDomain(domain.id)
+            toast.success('تم تعيين النطاق كرئيسي')
+        } catch (error) {
+            toast.error('فشل في تعيين النطاق كرئيسي')
+        }
+    }
+
+    const handleEdit = async (domainId: string, newDomain: string, redirectUrl: string) => {
+        try {
+            await updateDomain(domainId, { redirect_url: redirectUrl })
+            toast.success('تم تحديث النطاق')
+        } catch (error) {
+            toast.error('فشل في تحديث النطاق')
+        }
+    }
+
+    const filteredDomains = useMemo(() => {
+        return domains.filter(domain => {
+            const matchesSearch = domain.domain.toLowerCase().includes(searchQuery.toLowerCase())
+            const matchesStatus = statusFilter === 'all' || domain.status === statusFilter
+            return matchesSearch && matchesStatus
+        })
+    }, [domains, searchQuery, statusFilter])
+
+    const getStatusConfig = (status: string) => {
+        switch (status) {
+            case 'verified':
+                return { icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', label: 'مفعّل' }
+            case 'pending':
+                return { icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', label: 'في انتظار التحقق' }
+            case 'failed':
+                return { icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', label: 'فشل' }
+            default:
+                return { icon: Globe, color: 'text-neutral-600', bg: 'bg-neutral-50', border: 'border-neutral-200', label: 'غير معروف' }
+        }
+    }
 
     if (showAddDomain) {
-        return <DomainSetup onCancel={() => setShowAddDomain(false)} />
+        return <DomainSetup onCancel={() => setShowAddDomain(false)} onSuccess={() => { mutate(); setShowAddDomain(false) }} />
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 p-6">
+        <div className="grid gap-5 p-6">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-semibold text-slate-900">النطاقات</h1>
-                <div className="flex items-center gap-2">
-                    <Button
-                        onClick={() => setShowAddDomain(true)}
-                        className="font-semibold inline-flex items-center justify-center border select-none relative cursor-pointer transition ease-in-out duration-200 bg-black text-white hover:bg-black/90 text-sm h-8 px-3 rounded-xl gap-1"
-                    >
-                        <Plus className="h-4 w-4" />
-                        إضافة نطاق
-                    </Button>
-                    <button className="inline-flex items-center justify-center border select-none relative cursor-pointer transition ease-in-out duration-200 bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 font-normal text-sm h-8 px-3 rounded-xl gap-1 pl-2.5 pr-1.5">
-                        <Code className="h-4 w-4 text-cyan-500" />
-                        <span>API</span>
-                        <span className="ml-1 rounded bg-slate-200 px-1.5 py-0.5 text-xs text-slate-600">A</span>
-                    </button>
-                </div>
-            </div>
-
-            {/* Filters Row */}
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex flex-wrap justify-between gap-6">
                 {/* Search */}
-                <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input
-                        placeholder="بحث..."
-                        className="pl-10 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus-visible:ring-slate-400 h-9"
-                    />
-                </div>
-
-                {/* Status Dropdown */}
-                <button className="flex items-center justify-between gap-8 px-4 py-2 rounded-md border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 min-w-[160px] h-9">
-                    <span>جميع الحالات</span>
-                    <ChevronDown className="h-4 w-4 text-slate-400" />
-                </button>
-
-                {/* Region Dropdown */}
-                <button className="flex items-center justify-between gap-8 px-4 py-2 rounded-md border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 min-w-[160px] h-9">
-                    <span>جميع المناطق</span>
-                    <ChevronDown className="h-4 w-4 text-slate-400" />
-                </button>
-
-                {/* Download Button */}
-                <button className="p-2 rounded-md border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 h-9 w-9 flex items-center justify-center">
-                    <Download className="h-4 w-4" />
-                </button>
-            </div>
-
-            {/* Empty State Card */}
-            <div className="flex h-80 flex-col items-center justify-center gap-8 rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
-                <div className="flex max-w-md flex-col gap-2 text-center">
-                    <h2 className="text-xl tracking-[-0.16px] text-slate-900 font-bold">لا توجد نطاقات بعد</h2>
-                    <span className="text-sm text-slate-500 font-normal text-balance break-words hyphens-auto">
-                        تحقق من نطاقك عن طريق إضافة سجل DNS وابدأ في إرسال واستقبال رسائل البريد الإلكتروني من عنوانك الخاص
-                    </span>
-                    <div className="flex flex-row items-center justify-center gap-2 mt-4">
-                        <Button
-                            onClick={() => setShowAddDomain(true)}
-                            className="font-semibold inline-flex items-center justify-center border select-none relative cursor-pointer transition ease-in-out duration-200 bg-black text-white hover:bg-black/90 text-sm h-8 px-3 rounded-xl gap-1"
-                        >
-                            <Plus className="h-4 w-4" />
-                            إضافة نطاق
-                        </Button>
+                <div className="w-full sm:w-auto">
+                    <div className="relative max-w-sm">
+                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                        <Input
+                            placeholder="البحث عن نطاق..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pr-10 bg-white border-neutral-200 h-9 rounded-lg"
+                        />
                     </div>
                 </div>
+
+                {/* Filters & Add Button */}
+                <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
+                    {/* Toggle Group */}
+                    <div className="inline-flex items-center rounded-lg border border-neutral-200 bg-white p-0.5">
+                        {[
+                            { value: 'all', label: 'الكل' },
+                            { value: 'verified', label: 'مفعّل' },
+                            { value: 'pending', label: 'في انتظار' },
+                        ].map((option) => (
+                            <button
+                                key={option.value}
+                                onClick={() => setStatusFilter(option.value as any)}
+                                className={cn(
+                                    "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                                    statusFilter === option.value
+                                        ? "bg-neutral-900 text-white"
+                                        : "text-neutral-600 hover:text-neutral-900"
+                                )}
+                            >
+                                {option.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Add Button */}
+                    <Button
+                        onClick={() => setShowAddDomain(true)}
+                        className="h-9 rounded-lg bg-neutral-900 text-white hover:bg-neutral-800"
+                    >
+                        <Plus className="w-4 h-4 ml-2" />
+                        إضافة نطاق
+                    </Button>
+                </div>
             </div>
+
+            {/* Content */}
+            <div className="animate-fade-in">
+                {loading ? (
+                    /* Loading State */
+                    <ul className="grid grid-cols-1 gap-3">
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                            <li key={idx}>
+                                <DomainCardPlaceholder />
+                            </li>
+                        ))}
+                    </ul>
+                ) : domains.length === 0 ? (
+                    /* Empty State - Dub Style */
+                    <AnimatedEmptyState
+                        title="لا توجد نطاقات مخصصة"
+                        description="استخدم النطاقات المخصصة لتعزيز علامتك التجارية وزيادة معدل النقر"
+                        cardContent={
+                            <>
+                                <Globe className="size-4 text-[#FF6500]" />
+                                <div className="h-2.5 w-24 min-w-0 rounded-sm bg-neutral-200" />
+                                <div className="hidden grow items-center justify-end gap-1.5 text-neutral-500 xs:flex">
+                                    <MousePointer2 className="size-3.5" />
+                                </div>
+                            </>
+                        }
+                        addButton={
+                            <Button
+                                onClick={() => setShowAddDomain(true)}
+                                className="h-9 rounded-lg bg-gradient-to-r from-[#FF6500] to-[#FF4F0F] text-white hover:from-[#FF4F0F] hover:to-[#E55500] font-semibold shadow-md"
+                            >
+                                <Plus className="w-4 h-4 ml-2" />
+                                أضف نطاقك الأول
+                            </Button>
+                        }
+                    />
+                ) : filteredDomains.length === 0 ? (
+                    /* No Results */
+                    <div className="flex flex-col items-center gap-4 rounded-xl border border-neutral-200 bg-white py-10">
+                        <div className="p-3 bg-neutral-100 rounded-full">
+                            <Globe className="w-6 h-6 text-neutral-500" />
+                        </div>
+                        <p className="text-neutral-500 text-sm">لا توجد نتائج مطابقة</p>
+                    </div>
+                ) : (
+                    /* Domain List */
+                    <motion.ul
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 gap-3"
+                    >
+                        <AnimatePresence mode="popLayout">
+                            {filteredDomains.map((domain) => (
+                                <motion.li
+                                    key={domain.id}
+                                    variants={itemVariants}
+                                    layout
+                                >
+                                    <DomainCard
+                                        domain={domain}
+                                        onDelete={() => handleDelete(domain)}
+                                        onVerify={() => handleVerify(domain)}
+                                        onEdit={(newDomain, redirectUrl) => handleEdit(domain.id, newDomain, redirectUrl)}
+                                        onSetPrimary={() => handleSetPrimary(domain)}
+                                    />
+                                </motion.li>
+                            ))}
+                        </AnimatePresence>
+                    </motion.ul>
+                )}
+            </div>
+
+            {/* Pagination Footer */}
+            {domains.length > 0 && (
+                <div className="sticky bottom-0 rounded-b-[inherit] border-t border-neutral-200 bg-white px-3.5 py-2">
+                    <div className="flex items-center justify-between text-sm text-neutral-500">
+                        <span>{domains.length} نطاق</span>
+                        {filteredDomains.length !== domains.length && (
+                            <span>عرض {filteredDomains.length} من {domains.length}</span>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

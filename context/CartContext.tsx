@@ -6,48 +6,64 @@ export interface CartItem {
     id: string;
     name: string;
     price: number;
-    size: string;
     image: string;
     quantity: number;
+    selectedOptions: Record<string, string>;
 }
 
 interface CartContextType {
     items: CartItem[];
     addToCart: (item: Omit<CartItem, "quantity">) => void;
-    removeFromCart: (id: string, size: string) => void;
-    updateQuantity: (id: string, size: string, quantity: number) => void;
+    removeFromCart: (id: string, selectedOptions: Record<string, string>) => void;
+    updateQuantity: (id: string, selectedOptions: Record<string, string>, quantity: number) => void;
     clearCart: () => void;
     getTotalItems: () => number;
     getTotalPrice: () => number;
 }
 
+// Helper to compare options
+const areOptionsEqual = (opts1: Record<string, string>, opts2: Record<string, string>) => {
+    const keys1 = Object.keys(opts1).sort();
+    const keys2 = Object.keys(opts2).sort();
+    if (keys1.length !== keys2.length) return false;
+    return keys1.every(key => opts1[key] === opts2[key]);
+};
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
+    const [isMounted, setIsMounted] = useState(false);
 
-    // Load cart from localStorage on mount
+    // Initialize functionality only after mount to avoid hydration mismatch
     useEffect(() => {
+        setIsMounted(true);
         const savedCart = localStorage.getItem("cart");
         if (savedCart) {
-            setItems(JSON.parse(savedCart));
+            try {
+                setItems(JSON.parse(savedCart));
+            } catch (e) {
+                console.error("Failed to parse cart from local storage", e);
+            }
         }
     }, []);
 
-    // Save cart to localStorage whenever it changes
+    // Save cart to localStorage whenever it changes, but only after mount
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(items));
-    }, [items]);
+        if (isMounted) {
+            localStorage.setItem("cart", JSON.stringify(items));
+        }
+    }, [items, isMounted]);
 
     const addToCart = (item: Omit<CartItem, "quantity">) => {
         setItems((prevItems) => {
             const existingItem = prevItems.find(
-                (i) => i.id === item.id && i.size === item.size
+                (i) => i.id === item.id && areOptionsEqual(i.selectedOptions, item.selectedOptions)
             );
 
             if (existingItem) {
                 return prevItems.map((i) =>
-                    i.id === item.id && i.size === item.size
+                    i.id === item.id && areOptionsEqual(i.selectedOptions, item.selectedOptions)
                         ? { ...i, quantity: i.quantity + 1 }
                         : i
                 );
@@ -57,21 +73,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         });
     };
 
-    const removeFromCart = (id: string, size: string) => {
+    const removeFromCart = (id: string, selectedOptions: Record<string, string>) => {
         setItems((prevItems) =>
-            prevItems.filter((item) => !(item.id === id && item.size === size))
+            prevItems.filter((item) => !(item.id === id && areOptionsEqual(item.selectedOptions, selectedOptions)))
         );
     };
 
-    const updateQuantity = (id: string, size: string, quantity: number) => {
+    const updateQuantity = (id: string, selectedOptions: Record<string, string>, quantity: number) => {
         if (quantity <= 0) {
-            removeFromCart(id, size);
+            removeFromCart(id, selectedOptions);
             return;
         }
 
         setItems((prevItems) =>
             prevItems.map((item) =>
-                item.id === id && item.size === size ? { ...item, quantity } : item
+                item.id === id && areOptionsEqual(item.selectedOptions, selectedOptions) ? { ...item, quantity } : item
             )
         );
     };

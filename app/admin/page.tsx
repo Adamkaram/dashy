@@ -8,7 +8,7 @@ import { PageContentHeader } from '@/components/PageContentHeader';
 export default function AdminDashboard() {
     const [stats, setStats] = useState({
         categories: 0,
-        services: 0,
+        products: 0,
         heroSlides: 0,
     });
     const [loading, setLoading] = useState(true);
@@ -19,21 +19,21 @@ export default function AdminDashboard() {
 
     const fetchStats = async () => {
         try {
-            const [categoriesRes, servicesRes, slidesRes] = await Promise.all([
+            const [categoriesRes, productsRes, slidesRes] = await Promise.all([
                 fetch('/api/admin/categories'),
-                fetch('/api/admin/services'),
+                fetch('/api/admin/products'),
                 fetch('/api/admin/hero-slides'),
             ]);
 
-            const [categories, services, slides] = await Promise.all([
+            const [categories, products, slides] = await Promise.all([
                 categoriesRes.json(),
-                servicesRes.json(),
+                productsRes.json(),
                 slidesRes.json(),
             ]);
 
             setStats({
                 categories: categories.length || 0,
-                services: services.length || 0,
+                products: products.length || 0,
                 heroSlides: slides.length || 0,
             });
         } catch (error) {
@@ -52,11 +52,11 @@ export default function AdminDashboard() {
             href: '/admin/categories',
         },
         {
-            title: 'الخدمات',
-            value: stats.services,
+            title: 'المنتجات',
+            value: stats.products,
             icon: Package,
             color: 'bg-green-500',
-            href: '/admin/services',
+            href: '/admin/products',
         },
         {
             title: 'شرائح Hero',
@@ -104,30 +104,30 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <Link
                             href="/admin/categories/new"
-                            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#8F6B43] hover:bg-gray-50 transition-colors"
+                            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#FF6500] hover:bg-gray-50 transition-colors"
                         >
-                            <FolderTree className="w-5 h-5 text-[#8F6B43]" />
+                            <FolderTree className="w-5 h-5 text-[#FF6500]" />
                             <span className="font-medium text-gray-700">إضافة تصنيف</span>
                         </Link>
                         <Link
-                            href="/admin/services/new"
-                            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#8F6B43] hover:bg-gray-50 transition-colors"
+                            href="/admin/products/new"
+                            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#FF6500] hover:bg-gray-50 transition-colors"
                         >
-                            <Package className="w-5 h-5 text-[#8F6B43]" />
-                            <span className="font-medium text-gray-700">إضافة خدمة</span>
+                            <Package className="w-5 h-5 text-[#FF6500]" />
+                            <span className="font-medium text-gray-700">إضافة منتج</span>
                         </Link>
                         <Link
                             href="/admin/hero-slides/new"
-                            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#8F6B43] hover:bg-gray-50 transition-colors"
+                            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#FF6500] hover:bg-gray-50 transition-colors"
                         >
-                            <ImageIcon className="w-5 h-5 text-[#8F6B43]" />
+                            <ImageIcon className="w-5 h-5 text-[#FF6500]" />
                             <span className="font-medium text-gray-700">إضافة شريحة</span>
                         </Link>
                         <Link
                             href="/admin/settings"
-                            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#8F6B43] hover:bg-gray-50 transition-colors"
+                            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#FF6500] hover:bg-gray-50 transition-colors"
                         >
-                            <TrendingUp className="w-5 h-5 text-[#8F6B43]" />
+                            <TrendingUp className="w-5 h-5 text-[#FF6500]" />
                             <span className="font-medium text-gray-700">الإعدادات</span>
                         </Link>
                     </div>

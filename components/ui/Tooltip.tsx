@@ -98,14 +98,14 @@ export function TooltipContent({
                     <a
                         href={href}
                         {...(target ? { target } : {})}
-                        className="flex h-8 w-full items-center justify-center whitespace-nowrap rounded-lg border bg-[#53131C] text-white px-4 text-sm hover:bg-[#6b1a26] transition-colors"
+                        className="flex h-8 w-full items-center justify-center whitespace-nowrap rounded-lg border bg-[#FF4F0F] text-white px-4 text-sm hover:bg-[#FF4F0F] transition-colors"
                     >
                         {cta}
                     </a>
                 ) : onClick ? (
                     <button
                         onClick={onClick}
-                        className="flex h-8 w-full items-center justify-center whitespace-nowrap rounded-lg border bg-[#53131C] text-white px-4 text-sm hover:bg-[#6b1a26] transition-colors"
+                        className="flex h-8 w-full items-center justify-center whitespace-nowrap rounded-lg border bg-[#FF4F0F] text-white px-4 text-sm hover:bg-[#FF4F0F] transition-colors"
                     >
                         {cta}
                     </button>

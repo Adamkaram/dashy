@@ -4,7 +4,7 @@ export default function Footer() {
     return (
         <>
             {/* Instagram CTA */}
-            <section className="py-16 bg-gradient-to-br from-[#8F6B43] to-[#53131C]">
+            <section className="py-16 bg-gradient-to-br from-[#FF6500] to-[#FF4F0F]">
                 <div className="container mx-auto px-4 text-center">
                     <a
                         href="https://www.instagram.com/mymomentsq8"
@@ -21,7 +21,7 @@ export default function Footer() {
             </section>
 
             {/* Footer - Sarainah Exact Style */}
-            <footer className="bg-[#F0EBE5] border-[#8F6B43] py-8">
+            <footer className="bg-[#FFEDD5] border-[#FF6500] py-8">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col items-center gap-6">
                         <Link href="/">
@@ -33,10 +33,10 @@ export default function Footer() {
                         </Link>
 
                         <nav className="flex gap-6 text-[#46423D]">
-                            <Link href="/about" className="hover:text-[#8F6B43] transition-colors">
+                            <Link href="/about" className="hover:text-[#FF6500] transition-colors">
                                 عن الموقع
                             </Link>
-                            <a href="#" className="hover:text-[#8F6B43] transition-colors">
+                            <a href="#" className="hover:text-[#FF6500] transition-colors">
                                 الشروط والأحكام
                             </a>
                         </nav>
@@ -46,7 +46,7 @@ export default function Footer() {
                         </p>
 
                         <p className="text-sm text-[#46423D]">
-                            التصميم  والتنفيذ بواسطة  <Link href="https://atharagncy.com/en" className="text-[#8F6B43] hover:underline">اثر</Link>
+                            التصميم  والتنفيذ بواسطة  <Link href="https://atharagncy.com/en" className="text-[#FF6500] hover:underline">اثر</Link>
                         </p>
 
                     </div>

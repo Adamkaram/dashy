@@ -18,14 +18,14 @@ export function CustomToast({
 
     const colors = {
         success: {
-            bg: 'bg-gradient-to-br from-[#ECE8DB] to-[#F0EBE5]',
-            icon: 'text-[#8F6B43]',
-            border: 'border-[#8F6B43]/20',
+            bg: 'bg-gradient-to-br from-[#FFF7ED] to-[#FFEDD5]',
+            icon: 'text-[#FF6500]',
+            border: 'border-[#FF6500]/20',
         },
         error: {
             bg: 'bg-gradient-to-br from-red-50 to-red-100',
-            icon: 'text-[#53131C]',
-            border: 'border-[#53131C]/20',
+            icon: 'text-[#FF4F0F]',
+            border: 'border-[#FF4F0F]/20',
         },
         info: {
             bg: 'bg-gradient-to-br from-blue-50 to-blue-100',
@@ -67,9 +67,9 @@ export function OrderSuccessToast({
     customerName: string;
 }) {
     return (
-        <div className="flex flex-col gap-3 rounded-xl bg-gradient-to-br from-[#ECE8DB] to-[#F0EBE5] border-2 border-[#8F6B43]/30 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-sm min-w-[360px]">
+        <div className="flex flex-col gap-3 rounded-xl bg-gradient-to-br from-[#FFF7ED] to-[#FFEDD5] border-2 border-[#FF6500]/30 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-sm min-w-[360px]">
             <div className="flex items-center gap-2">
-                <div className="flex size-10 items-center justify-center rounded-full bg-[#8F6B43]">
+                <div className="flex size-10 items-center justify-center rounded-full bg-[#FF6500]">
                     <CheckCircle2 className="size-5 text-white" />
                 </div>
                 <div>
@@ -81,7 +81,7 @@ export function OrderSuccessToast({
             <div className="rounded-lg bg-white/60 p-3 space-y-2">
                 <div className="flex justify-between items-center">
                     <span className="text-xs font-medium text-[#46423D]/60">رقم الطلب</span>
-                    <span className="text-sm font-mono font-bold text-[#8F6B43]">#{orderId}</span>
+                    <span className="text-sm font-mono font-bold text-[#FF6500]">#{orderId}</span>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-xs font-medium text-[#46423D]/60">العميل</span>

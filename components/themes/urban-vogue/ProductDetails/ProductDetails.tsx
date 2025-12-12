@@ -1,10 +1,29 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
-import { toast } from "sonner";
+import { useThemeToast } from "@/hooks/useThemeToast";
 import { motion, AnimatePresence } from "framer-motion";
 import AddToCartNotificationResolver from "@/components/resolvers/AddToCartNotificationResolver";
+import PhotoSwipeLightbox from 'photoswipe/lightbox';
+import 'photoswipe/style.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, EffectFade } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Info, Truck, Shield, Sparkles, Leaf, FileText, AlertCircle, Heart, Ruler } from 'lucide-react';
+import 'swiper/css/effect-fade';
+
+interface ProductOption {
+    id: string;
+    title: string;
+    type: string;
+    displayStyle: string;
+    isRequired: boolean;
+    options: { label: string; price: number; value?: string }[];
+}
 
 interface Product {
     id: string;
@@ -15,6 +34,8 @@ interface Product {
     slug: string;
     images?: { imageUrl: string }[];
     description?: string | null;
+    metadata?: Record<string, any>;
+    options?: ProductOption[];
 }
 
 interface ProductDetailsProps {
@@ -22,13 +43,59 @@ interface ProductDetailsProps {
     relatedProducts: Product[];
 }
 
-const sizes = ["32", "34", "36", "38", "40", "42", "44", "46"];
+const iconMap: Record<string, any> = {
+    Info, Truck, Shield, Sparkles, Leaf, FileText, AlertCircle, Heart, Ruler
+};
+
+function AccordionItem({ title, children, iconName }: { title: string; children: React.ReactNode; iconName?: string }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const Icon = iconName ? iconMap[iconName] || Info : Info;
+
+    return (
+        <div>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between py-5 text-sm uppercase tracking-wide hover:text-gray-600 transition-colors"
+            >
+                <div className="flex items-center gap-3">
+                    {iconName && <Icon className="w-4 h-4 text-gray-400" />}
+                    <span>{title}</span>
+                </div>
+                <span className={`text-lg font-light transition-transform duration-300 flex items-center justify-center w-6 h-6 ${isOpen ? 'rotate-45' : ''}`}>
+                    +
+                </span>
+            </button>
+            <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96 opacity-100 pb-5" : "max-h-0 opacity-0"}`}
+            >
+                <div className="text-sm text-gray-600 font-light whitespace-pre-line pl-7">
+                    {children}
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export default function ProductDetails({ product, relatedProducts }: ProductDetailsProps) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-    const [selectedSize, setSelectedSize] = useState(sizes[0]);
+    // Initialize selected options with defaults (first choice of each option)
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
+        const defaults: Record<string, string> = {};
+        if (product.options) {
+            product.options.forEach(opt => {
+                if (opt.options && opt.options.length > 0) {
+                    defaults[opt.title] = opt.options[0].label;
+                }
+            });
+        }
+        return defaults;
+    });
+
+    const [imageDimensions, setImageDimensions] = useState<Record<number, { width: number; height: number }>>({});
+    const swiperRef = useRef<SwiperType | null>(null);
     const { addToCart } = useCart();
-    const [isCareInstructionsOpen, setIsCareInstructionsOpen] = useState(false);
+    const toast = useThemeToast();
+    // Accordion state managed by AccordionItem component
     const [direction, setDirection] = useState(0);
     const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -51,8 +118,8 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
 
     // Build gallery images array
     const galleryImages = product.images && product.images.length > 0
-        ? product.images.map(img => img.imageUrl)
-        : [product.image];
+        ? product.images.map(img => img.imageUrl).filter(url => url && url.length > 0)
+        : [product.image].filter(url => url && url.length > 0);
 
     const currentImage = galleryImages[selectedImageIndex] || product.image;
     const displayPrice = product.salePrice || product.basePrice;
@@ -145,32 +212,78 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
         }
     }, [selectedImageIndex, galleryImages.length]);
 
+    // Initialize PhotoSwipe
+    useEffect(() => {
+        let lightbox: PhotoSwipeLightbox | null = new PhotoSwipeLightbox({
+            gallery: '.product-image-main',
+            children: 'a',
+            pswpModule: () => import('photoswipe')
+        });
+
+        lightbox.init();
+
+        return () => {
+            lightbox?.destroy();
+            lightbox = null;
+        };
+    }, []);
+
     const [showNotification, setShowNotification] = useState(false);
     const [lastAddedItem, setLastAddedItem] = useState<{
         title: string;
         image: string;
         price: number;
-        size: string;
+        selectedOptions: Record<string, string>;
         quantity: number;
     } | null>(null);
 
+    const router = useRouter();
+
     const handleAddToCart = () => {
+        // Validate required options (though we default select them, good to be safe)
+        if (product.options) {
+            const missing = product.options.find(opt => opt.isRequired && !selectedOptions[opt.title]);
+            if (missing) {
+                toast.error(`Please select ${missing.title}`);
+                return;
+            }
+        }
+
         addToCart({
             id: product.id,
             name: product.title,
             price: displayPrice,
             image: product.image,
-            size: selectedSize,
+            selectedOptions: selectedOptions,
         });
 
         setLastAddedItem({
             title: product.title,
             image: product.image,
             price: displayPrice,
-            size: selectedSize,
+            selectedOptions: selectedOptions,
             quantity: 1
         });
         setShowNotification(true);
+    };
+
+    const handleBuyNow = () => {
+        if (product.options) {
+            const missing = product.options.find(opt => opt.isRequired && !selectedOptions[opt.title]);
+            if (missing) {
+                toast.error(`Please select ${missing.title}`);
+                return;
+            }
+        }
+
+        addToCart({
+            id: product.id,
+            name: product.title,
+            price: displayPrice,
+            image: product.image,
+            selectedOptions: selectedOptions,
+        });
+        router.push('/checkout');
     };
 
     return (
@@ -192,8 +305,7 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                                         onClick={() => {
                                             // Act as "Previous Image" button
                                             const newIndex = Math.max(0, selectedImageIndex - 1);
-                                            const newDirection = newIndex > selectedImageIndex ? 1 : -1;
-                                            setDirection(newDirection);
+                                            swiperRef.current?.slideTo(newIndex);
                                             setSelectedImageIndex(newIndex);
                                         }}
                                         className="absolute top-0 left-0 w-full h-8 flex items-center justify-center bg-white z-20 cursor-pointer text-black"
@@ -223,8 +335,7 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                                             thumbnailRefs.current[index] = el;
                                         }}
                                         onClick={() => {
-                                            const newDirection = index > selectedImageIndex ? 1 : -1;
-                                            setDirection(newDirection);
+                                            swiperRef.current?.slideTo(index);
                                             setSelectedImageIndex(index);
                                         }}
                                         className={`product__thumb-item relative aspect-[2/3] w-full mb-[8.5px] md:mb-[15px] transition-all duration-300 border border-transparent ${selectedImageIndex === index
@@ -254,8 +365,7 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                                         onClick={() => {
                                             // Act as "Next Image" button
                                             const newIndex = Math.min(galleryImages.length - 1, selectedImageIndex + 1);
-                                            const newDirection = newIndex > selectedImageIndex ? 1 : -1;
-                                            setDirection(newDirection);
+                                            swiperRef.current?.slideTo(newIndex);
                                             setSelectedImageIndex(newIndex);
                                         }}
                                         className="absolute bottom-0 left-0 w-full h-8 flex items-center justify-center bg-white z-20 cursor-pointer text-black"
@@ -266,33 +376,84 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                             </AnimatePresence>
                         </div>
 
-                        {/* Main Image */}
-                        <div className="flex-1 bg-gray-50 aspect-[2/3] relative overflow-hidden">
-                            <AnimatePresence initial={false} custom={direction}>
-                                <motion.div
-                                    key={selectedImageIndex}
-                                    custom={direction}
-                                    variants={slideVariants}
-                                    initial="enter"
-                                    animate="center"
-                                    exit="exit"
-                                    transition={{
-                                        x: { type: "tween", duration: 0.3, ease: "easeInOut" },
-                                        opacity: { duration: 0.2 }
-                                    }}
-                                    className="absolute w-full h-full"
-                                >
-                                    <Image
-                                        src={currentImage}
-                                        alt={product.title}
-                                        fill
-                                        className="object-cover"
-                                        priority
-                                        sizes="(max-width: 768px) 100vw, 50vw"
-                                        unoptimized
-                                    />
-                                </motion.div>
-                            </AnimatePresence>
+                        {/* Main Image Slider */}
+                        <div className="flex-1 bg-gray-50 aspect-[2/3] relative overflow-hidden product-image-main group">
+                            <Swiper
+                                modules={[Navigation]}
+                                spaceBetween={0}
+                                slidesPerView={1}
+                                className="h-full w-full"
+                                onSlideChange={(swiper) => {
+                                    setSelectedImageIndex(swiper.activeIndex);
+                                    // Update direction for thumbnail sync if needed
+                                    setDirection(swiper.activeIndex > selectedImageIndex ? 1 : -1);
+                                }}
+                                onSwiper={(swiper) => {
+                                    swiperRef.current = swiper;
+                                }}
+                                initialSlide={selectedImageIndex}
+                            >
+                                {galleryImages.map((img, index) => (
+                                    <SwiperSlide key={index}>
+                                        <div className="relative w-full h-full image-wrap">
+                                            <a
+                                                href={img}
+                                                data-pswp-src={img}
+                                                data-pswp-width={imageDimensions[index]?.width || 1800}
+                                                data-pswp-height={imageDimensions[index]?.height || 2700}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="block w-full h-full cursor-zoom-in"
+                                                id={`image-link-${index}`}
+                                            >
+                                                <Image
+                                                    src={img}
+                                                    alt={`${product.title} - View ${index + 1}`}
+                                                    fill
+                                                    className="object-cover"
+                                                    priority={index === 0}
+                                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                                    unoptimized
+                                                    onLoadingComplete={(result) => {
+                                                        setImageDimensions(prev => ({
+                                                            ...prev,
+                                                            [index]: {
+                                                                width: result.naturalWidth,
+                                                                height: result.naturalHeight
+                                                            }
+                                                        }));
+                                                    }}
+                                                />
+                                            </a>
+
+                                            {/* Zoom Button */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    const link = document.getElementById(`image-link-${index}`);
+                                                    if (link) link.click();
+                                                }}
+                                                className="btn btn--body btn--circle js-photoswipe__zoom product__photo-zoom absolute bottom-4 right-4 z-10 bg-white p-2 rounded-full shadow-md hover:scale-110 transition-transform hidden lg:flex items-center justify-center text-black"
+                                                aria-label="Zoom"
+                                            >
+                                                <svg aria-hidden="true" focusable="false" role="presentation" className="icon icon-search w-5 h-5" viewBox="0 0 64 64">
+                                                    <title>icon-search</title>
+                                                    <path d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58ZM54 54 41.94 42" stroke="currentColor" strokeWidth="4" fill="none"></path>
+                                                </svg>
+                                            </button>
+
+                                            {/* Mobile/Tablet Zoom Hint */}
+                                            <div className="absolute top-4 right-4 lg:hidden pointer-events-none">
+                                                <span className="bg-black/10 backdrop-blur-sm p-1.5 rounded-full block text-white">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21 21-6-6m6 6v-4.8m0 4.8h-4.8" /></svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
                         </div>
                     </div>
 
@@ -317,29 +478,158 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                             </p>
                         </div>
 
-                        {/* Size Selector */}
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm uppercase tracking-wider text-gray-600">Size</span>
-                                <button className="text-sm underline underline-offset-4 text-gray-500 hover:text-black">
-                                    Size Guide
-                                </button>
+                        {/* Product Options */}
+                        {/* Product Options Logic */}
+                        {(() => {
+                            // Smart Extraction: Find the "Main" size option to feature at the top
+                            const sizeOption = product.options?.find(opt =>
+                                opt.title.toLowerCase().includes('size') ||
+                                opt.title.includes('مقاس') ||
+                                opt.title.toLowerCase().includes('dimension')
+                            );
+
+                            // Legacy Fallback if NO options exist at all
+                            if (!product.options || product.options.length === 0) {
+                                return (
+                                    <div className="mb-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-sm font-medium uppercase tracking-wide text-gray-900">
+                                                Size: <span className="text-gray-500 font-normal normal-case ml-1">{selectedOptions['Size'] || 'Select a size'}</span>
+                                            </h3>
+                                            <button className="text-xs text-gray-500 underline hover:text-black flex items-center gap-1">
+                                                <Ruler className="w-3 h-3" /> Size Guide
+                                            </button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {['36', '38', '40', '42'].map((size) => (
+                                                <button
+                                                    key={size}
+                                                    onClick={() => setSelectedOptions(prev => ({ ...prev, 'Size': size }))}
+                                                    className={`h-12 px-6 min-w-[3rem] border transition-all duration-200 text-sm flex items-center justify-center ${selectedOptions['Size'] === size
+                                                        ? "border-black bg-black text-white"
+                                                        : "border-gray-200 hover:border-black text-gray-800"
+                                                        }`}
+                                                >
+                                                    {size}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            // If we found a "Size" option, render it here (Prime Spot) with full dynamic features
+                            if (sizeOption) {
+                                return (
+                                    <div className="mb-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-sm font-medium uppercase tracking-wide text-gray-900">
+                                                {sizeOption.title}: <span className="text-gray-500 font-normal normal-case ml-1">{selectedOptions[sizeOption.title]}</span>
+                                            </h3>
+                                            <button className="text-xs text-gray-500 underline hover:text-black flex items-center gap-1">
+                                                <Ruler className="w-3 h-3" /> Size Guide
+                                            </button>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2">
+                                            {sizeOption.options.map(choice => {
+                                                const isSelected = selectedOptions[sizeOption.title] === choice.label;
+                                                return (
+                                                    <button
+                                                        key={choice.label}
+                                                        onClick={() => setSelectedOptions(prev => ({ ...prev, [sizeOption.title]: choice.label }))}
+                                                        className={`h-12 px-6 min-w-[3rem] border transition-all duration-200 text-sm flex items-center justify-center ${isSelected
+                                                            ? "border-black bg-black text-white"
+                                                            : "border-gray-200 hover:border-black text-gray-800"
+                                                            }`}
+                                                    >
+                                                        {choice.label}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            return null;
+                        })()}
+
+                        {product.options?.filter(opt =>
+                            !opt.title.toLowerCase().includes('size') &&
+                            !opt.title.includes('مقاس') &&
+                            !opt.title.toLowerCase().includes('dimension')
+                        ).map((option) => (
+                            <div key={option.id}>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-sm font-medium uppercase tracking-wide text-gray-900">
+                                        {option.title}: <span className="text-gray-500 font-normal normal-case ml-1">{selectedOptions[option.title]}</span>
+                                    </h3>
+                                </div>
+
+                                {option.type === 'select' ? (
+                                    <div className="relative">
+                                        <select
+                                            value={selectedOptions[option.title] || ''}
+                                            onChange={(e) => setSelectedOptions(prev => ({ ...prev, [option.title]: e.target.value }))}
+                                            className="w-full appearance-none bg-white border border-gray-200 text-gray-900 text-sm p-3 pr-8 rounded-none focus:outline-none focus:border-black transition-colors cursor-pointer"
+                                        >
+                                            <option value="" disabled>Select {option.title}</option>
+                                            {option.options.map(choice => (
+                                                <option key={choice.label} value={choice.label}>
+                                                    {choice.label} {choice.price > 0 && `(+${choice.price} EGP)`}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-wrap gap-2">
+                                        {option.options.map((choice) => {
+                                            const isSelected = selectedOptions[option.title] === choice.label;
+
+                                            // Color Swatch Style
+                                            if (option.displayStyle === 'color') {
+                                                return (
+                                                    <button
+                                                        key={choice.label}
+                                                        onClick={() => setSelectedOptions(prev => ({ ...prev, [option.title]: choice.label }))}
+                                                        className={`w-10 h-10 rounded-full border-[1px] relative transition-all duration-200 ${isSelected
+                                                            ? "border-black scale-110 shadow-sm ring-1 ring-black ring-offset-2"
+                                                            : "border-gray-200 hover:border-gray-400 hover:scale-105"
+                                                            }`}
+                                                        style={{ backgroundColor: choice.value || '#000000' }}
+                                                        title={choice.label}
+                                                    >
+                                                        {isSelected && (
+                                                            <span className="absolute inset-0 flex items-center justify-center">
+                                                                <div className="w-2.5 h-2.5 bg-white rounded-full shadow-sm" />
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                );
+                                            }
+
+                                            // Default Buttons (Pills)
+                                            return (
+                                                <button
+                                                    key={choice.label}
+                                                    onClick={() => setSelectedOptions(prev => ({ ...prev, [option.title]: choice.label }))}
+                                                    className={`h-12 px-6 min-w-[3rem] border transition-all duration-200 text-sm flex items-center justify-center ${isSelected
+                                                        ? "border-black bg-black text-white"
+                                                        : "border-gray-200 hover:border-black text-gray-800"
+                                                        }`}
+                                                >
+                                                    {choice.label}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
-                            <div className="grid grid-cols-4 gap-3">
-                                {sizes.map((size) => (
-                                    <button
-                                        key={size}
-                                        onClick={() => setSelectedSize(size)}
-                                        className={`h-12 border transition-all duration-200 text-sm ${selectedSize === size
-                                            ? "border-black bg-black text-white"
-                                            : "border-gray-200 hover:border-black text-gray-800"
-                                            }`}
-                                    >
-                                        {size}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        ))}
 
                         {/* Action Buttons */}
                         <div className="space-y-4 pt-2">
@@ -350,7 +640,7 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
                                 Add to cart
                             </button>
                             <button
-                                onClick={handleAddToCart}
+                                onClick={handleBuyNow}
                                 className="w-full h-14 text-sm font-medium tracking-widest uppercase bg-black text-white hover:bg-gray-900 transition-colors duration-300"
                             >
                                 Buy it now
@@ -365,44 +655,63 @@ export default function ProductDetails({ product, relatedProducts }: ProductDeta
 
                             <div className="pt-6 border-t border-gray-100">
                                 <p className="font-medium uppercase tracking-wide text-xs mb-3 text-gray-500">Note</p>
-                                <p className="text-sm text-gray-600 leading-relaxed">
-                                    For the <strong>Dark Navy</strong> shade, please wash the jeans once before first use. These pieces are made with a special tint that gives each one a unique look. Due to the nature of the material, some color release may occur during the first 2-3 washes this is completely normal.
+                                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                                    {product.metadata?.note || 'For the Dark Navy shade, please wash the jeans once before first use. These pieces are made with a special tint that gives each one a unique look.'}
                                 </p>
                             </div>
                         </div>
 
                         {/* Accordions */}
                         <div className="border-t border-b border-gray-200 divide-y divide-gray-200">
-                            {/* Materials */}
-                            <button className="w-full flex items-center justify-between py-5 text-sm uppercase tracking-wide hover:text-gray-600 transition-colors">
-                                <span>Materials</span>
-                                <span className="text-lg font-light">+</span>
-                            </button>
+                            {/* Dynamic Sections rendering */}
+                            {(product.metadata?.sections as any[])?.length > 0 ? (
+                                (product.metadata!.sections as any[]).map((section, idx) => (
+                                    <div key={idx}>
+                                        <button
+                                            onClick={() => {
+                                                // Toggle logic needs state. Since sections are dynamic, we need an array or map of open states.
+                                                // Simple hack: We can use a details/summary HTML default or a localized generic component.
+                                                // But for "genius" animation, we need the state-driven height transition.
+                                                // Let's create a local component for the accordion item to manage its own state.
+                                            }}
+                                            className="w-full flex items-center justify-between py-5 text-sm uppercase tracking-wide hover:text-gray-600 transition-colors"
+                                        >
+                                            {/* ... Content ... */}
+                                        </button>
+                                    </div>
+                                ))
+                            ) : (
+                                // Legacy Fallback
+                                <>
+                                    {/* Materials */}
+                                    {product.metadata?.materials && (
+                                        <AccordionItem title="Materials">
+                                            {product.metadata.materials}
+                                        </AccordionItem>
+                                    )}
 
-                            {/* Shipping & Returns */}
-                            <button className="w-full flex items-center justify-between py-5 text-sm uppercase tracking-wide hover:text-gray-600 transition-colors">
-                                <span>Shipping & Returns</span>
-                                <span className="text-lg font-light">+</span>
-                            </button>
+                                    {/* Shipping & Returns */}
+                                    {product.metadata?.shipping_returns && (
+                                        <AccordionItem title="Shipping & Returns">
+                                            {product.metadata.shipping_returns}
+                                        </AccordionItem>
+                                    )}
 
-                            {/* Care Instructions */}
-                            <div>
-                                <button
-                                    onClick={() => setIsCareInstructionsOpen(!isCareInstructionsOpen)}
-                                    className="w-full flex items-center justify-between py-5 text-sm uppercase tracking-wide hover:text-gray-600 transition-colors"
-                                >
-                                    <span>Care Instructions</span>
-                                    <span className="text-lg font-light">{isCareInstructionsOpen ? '-' : '+'}</span>
-                                </button>
-                                <div
-                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${isCareInstructionsOpen ? "max-h-40 opacity-100 pb-5" : "max-h-0 opacity-0"
-                                        }`}
-                                >
-                                    <p className="text-sm text-gray-600 leading-relaxed font-light">
-                                        Machine wash cold. Do not bleach. Tumble dry low. Warm iron if needed. Wash separately for the first few washes.
-                                    </p>
-                                </div>
-                            </div>
+                                    {/* Care Instructions */}
+                                    {product.metadata?.care_instructions && (
+                                        <AccordionItem title="Care Instructions">
+                                            {product.metadata.care_instructions}
+                                        </AccordionItem>
+                                    )}
+                                </>
+                            )}
+
+                            {/* Render Dynamic Sections if present (Priority) */}
+                            {product.metadata?.sections && (product.metadata.sections as any[]).map((section, idx) => (
+                                <AccordionItem key={idx} title={section.title} iconName={section.icon}>
+                                    {section.content}
+                                </AccordionItem>
+                            ))}
                         </div>
 
                         {/* Social Share */}

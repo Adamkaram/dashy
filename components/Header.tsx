@@ -14,7 +14,7 @@ export default function Header() {
                     <div className="flex items-center justify-between h-full relative">
                         {/* Mobile Menu Button - Right Side (RTL) */}
                         <button
-                            className="md:hidden text-white hover:text-[#8F6B43] p-2 z-20"
+                            className="md:hidden text-white hover:text-[#FF6500] p-2 z-20"
                             onClick={() => setIsSidebarOpen(true)}
                         >
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -73,14 +73,14 @@ export default function Header() {
             )}
 
             {/* Mobile Sidebar */}
-            <div className={`fixed top-0 right-0 h-full w-[320px] bg-gradient-to-br from-[#53131C] to-[#3D0E14] z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`fixed top-0 right-0 h-full w-[320px] bg-gradient-to-br from-[#FF4F0F] to-[#3D0E14] z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="p-6 flex flex-col h-full">
                     {/* Header */}
                     <div className="flex justify-between items-center mb-8 pb-6 border-b border-white/20">
                         <span className="text-2xl font-bold text-white">القائمة</span>
                         <button
                             onClick={() => setIsSidebarOpen(false)}
-                            className="text-white hover:text-[#8F6B43] transition-colors p-2 hover:bg-white/10 rounded-lg"
+                            className="text-white hover:text-[#FF6500] transition-colors p-2 hover:bg-white/10 rounded-lg"
                         >
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -117,7 +117,7 @@ export default function Header() {
 
                         {/* Location */}
                         <div className="flex items-center gap-3 text-white/80 py-3 px-4">
-                            <svg className="w-5 h-5 text-[#8F6B43]" fill="currentColor" viewBox="0 0 16 16">
+                            <svg className="w-5 h-5 text-[#FF6500]" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
                             </svg>
                             <span className="font-medium">الكويت</span>

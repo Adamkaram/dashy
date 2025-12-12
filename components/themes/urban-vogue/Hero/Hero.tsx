@@ -6,31 +6,27 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Hero({ slides }: HeroProps) {
-    // Use the first slide or a default placeholder
-    // Use the first slide or a default placeholder if no slides provided
-    const slide = slides && slides.length > 0 ? slides[0] : {
-        image: 'https://ext.same-assets.com/1322334751/1988460870.jpeg', // Valid placeholder
-        title: 'URBAN ELEGANCE',
-        subtitle: 'Discover the new collection',
-        buttonText: 'SHOP NOW',
-        buttonLink: '/shop'
-    };
+    if (!slides || slides.length === 0) {
+        return <section className="relative h-screen w-full bg-gray-100" />;
+    }
+
+    const slide = slides[0];
 
     return (
         <section className="relative h-screen w-full overflow-hidden bg-gray-100">
             {/* Background Image with Side Slide Animation */}
             <motion.div
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }} // Custom easing for smooth "slide" feel
-                className="absolute inset-0 z-0"
+                initial={{ x: '200px', opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className="absolute inset-0 z-0 hero__image-wrapper"
             >
                 <div className="relative w-full h-full">
                     <Image
                         src={slide.image}
                         alt={slide.title}
                         fill
-                        className="object-cover"
+                        className="object-cover hero__image"
                         priority
                     />
                     {/* Overlay */}
@@ -39,24 +35,24 @@ export default function Hero({ slides }: HeroProps) {
             </motion.div>
 
             {/* Content */}
-            <div className="relative z-10 container mx-auto px-6 h-full flex flex-col justify-center items-center">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8, duration: 0.8 }}
-                    className="hero__text-content vertical-center horizontal-center"
-                >
-                    <div className="hero__text-shadow">
-                        <div className="hero__link">
+            <div className="relative z-10 w-full h-full flex flex-col justify-center items-center text-center">
+                <div className="hero__text-content relative z-[4] py-4 md:py-12">
+                    <div className="hero__text-shadow relative inline-block">
+                        <motion.div
+                            className="hero__link block relative mt-2 md:mt-4"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1.3, duration: 2, ease: "easeOut" }}
+                        >
                             <Link
-                                href="/collections/second-skin-collection"
-                                className="btn--inverse inline-block"
+                                href="/collections/winter-2025-collection"
+                                className="btn btn--inverse inline-block px-4 py-3 text-sm md:text-base font-medium tracking-wide border border-white bg-transparent text-white hover:bg-white hover:text-black transition-colors duration-300 uppercase"
                             >
                                 Second Skin Collection
                             </Link>
-                        </div>
+                        </motion.div>
                     </div>
-                </motion.div>
+                </div>
             </div>
         </section>
     );

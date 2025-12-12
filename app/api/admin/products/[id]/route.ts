@@ -35,10 +35,14 @@ export async function GET(
             ...product,
             category_id: product.categoryId,
             base_price: product.basePrice,
+            sale_price: product.salePrice,
             is_active: product.isActive,
-            provider_name: product.providerName,
-            provider_logo: product.providerLogo,
-            policy: product.policy,
+            // Inventory fields
+            sku: product.sku,
+            brand: product.brand,
+            quantity: product.quantity,
+            low_stock_threshold: product.lowStockThreshold,
+            metadata: product.metadata,
             created_at: product.createdAt,
             updated_at: product.updatedAt,
             options: product.options.map(opt => ({
@@ -70,7 +74,7 @@ export async function PUT(
         console.log('Service ID:', id);
         console.log('Request body:', body);
 
-        const { slug, category_id, title, subtitle, image, description, base_price, is_active, options, images, provider_name, provider_logo, policy } = body;
+        const { slug, category_id, title, subtitle, image, description, base_price, is_active, options, images, metadata, sku, brand, quantity, low_stock_threshold } = body;
         console.log('Extracted is_active:', is_active);
 
         // Update product
@@ -83,10 +87,14 @@ export async function PUT(
                 image: images && images.length > 0 ? images[0] : image, // Use first image as main
                 description,
                 basePrice: base_price,
+                salePrice: body.sale_price,
                 isActive: is_active,
-                providerName: provider_name,
-                providerLogo: provider_logo,
-                policy: policy,
+                // Inventory fields
+                sku: sku || null,
+                brand: brand || null,
+                quantity: quantity || 0,
+                lowStockThreshold: low_stock_threshold || 5,
+                metadata: metadata || {},
                 updatedAt: new Date()
             })
             .where(eq(products.id, id))
@@ -165,9 +173,7 @@ export async function PUT(
             category_id: finalService.categoryId,
             base_price: finalService.basePrice,
             is_active: finalService.isActive,
-            provider_name: finalService.providerName,
-            provider_logo: finalService.providerLogo,
-            policy: finalService.policy,
+            metadata: finalService.metadata,
             created_at: finalService.createdAt,
             updated_at: finalService.updatedAt,
             options: finalService.options.map(opt => ({
@@ -181,7 +187,7 @@ export async function PUT(
     } catch (error: any) {
         console.error('Error updating service:', error);
         return NextResponse.json(
-            { error: error.message || 'فشل في تحديث الخدمة' },
+            { error: error.message || 'فشل في تحديث المنتج' },
             { status: 500 }
         );
     }
@@ -199,9 +205,9 @@ export async function DELETE(
 
         return NextResponse.json({ success: true });
     } catch (error: any) {
-        console.error('Error deleting service:', error);
+        console.error('Error deleting product:', error);
         return NextResponse.json(
-            { error: error.message || 'فشل في حذف الخدمة' },
+            { error: error.message || 'فشل في حذف المنتج' },
             { status: 500 }
         );
     }

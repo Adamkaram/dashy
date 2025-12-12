@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index, integer, uuid, jsonb, decimal, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, integer, uuid, jsonb, decimal, varchar, serial } from "drizzle-orm/pg-core";
 
 // =====================================================
 // AUTH TABLES
@@ -167,16 +167,20 @@ export const products = pgTable("products", {
   image: text("image"),
   basePrice: integer("base_price").default(0).notNull(),
   salePrice: integer("sale_price").default(0),
-  badge: text("badge"),
   isActive: boolean("is_active").default(true).notNull(),
-  providerName: text("provider_name").default("My Moments"),
-  providerLogo: text("provider_logo"),
-  policy: text("policy"),
+  // Inventory & product fields (SKU unique per tenant)
+  sku: varchar("sku", { length: 100 }),
+  brand: varchar("brand", { length: 100 }),
+  // For simple products without variants. Variants track qty in productOptions.options JSONB
+  quantity: integer("quantity").default(0).notNull(),
+  lowStockThreshold: integer("low_stock_threshold").default(5),
+  metadata: jsonb("metadata").default({}),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => [
   index("idx_products_tenant_id").on(table.tenantId),
   index("idx_products_tenant_category").on(table.tenantId, table.categoryId),
+  index("idx_products_brand").on(table.brand),
 ]);
 
 export const productOptions = pgTable("product_options", {
@@ -186,7 +190,8 @@ export const productOptions = pgTable("product_options", {
   type: text("type").notNull(), // 'radio', 'checkbox', 'select'
   isRequired: boolean("is_required").default(false).notNull(),
   price: integer("price").default(0).notNull(),
-  options: jsonb("options").notNull(), // [{ label: string, price: number }]
+  options: jsonb("options").notNull(), // [{ label: string, price: number, value?: string, quantity?: number, sku?: string }]
+  displayStyle: varchar("display_style", { length: 50 }).default('text'),
   displayOrder: integer("display_order").default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -205,23 +210,72 @@ export const productImages = pgTable("product_images", {
 export const orders = pgTable("orders", {
   id: uuid("id").primaryKey().defaultRandom(),
   tenantId: uuid("tenant_id").notNull().references(() => tenants.id, { onDelete: "cascade" }),
+  // Product/Service Link (Optional now as it can be a cart of multiple items)
   productId: uuid("product_id").references(() => products.id, { onDelete: "set null" }),
+
+  // Customer Details
   customerName: text("customer_name").notNull(),
   customerPhone: text("customer_phone").notNull(),
-  date: text("date").notNull(),
-  time: text("time").notNull(),
-  area: text("area").notNull(),
+  customerEmail: text("customer_email"), // Added email
+
+  // Service Specific (Now Optional)
+  date: text("date"),
+  time: text("time"),
+  area: text("area"), // Can still be used or replaced by detailed address
+
+  // Store Specific (New)
+  address: text("address"),
+  city: text("city"),
+  governorate: text("governorate"),
+  items: jsonb("items").default([]), // Cart items [{productId, quantity, price...}]
+
+  // Financials
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
   status: text("status").default("pending").notNull(),
   notes: text("notes"),
   couponCode: text("coupon_code"),
   discount: decimal("discount", { precision: 10, scale: 2 }).default("0"),
+
+  // Meta
   selectedOptions: jsonb("selected_options").default({}),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => [
   index("idx_orders_tenant_id").on(table.tenantId),
   index("idx_orders_status").on(table.status),
+]);
+
+// ... (previous tables)
+
+export const coupons = pgTable("coupons", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  discountType: varchar("discount_type", { length: 20 }).notNull(),
+  discountValue: decimal("discount_value", { precision: 10, scale: 2 }).notNull(),
+  startDate: timestamp("start_date").defaultNow(),
+  endDate: timestamp("end_date"),
+  usageLimit: integer("usage_limit"),
+  usageCount: integer("usage_count").default(0),
+  isActive: boolean("is_active").default(true),
+  tenantId: uuid("tenant_id").references(() => tenants.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const heroSlides = pgTable("hero_slides", {
+  id: serial("id").primaryKey(), // Dump says id is integer with nextval sequence! Not UUID.
+  tenantId: uuid("tenant_id").notNull().references(() => tenants.id, { onDelete: "cascade" }),
+  image: text("image").notNull(),
+  title: text("title").notNull(),
+  subtitle: text("subtitle"),
+  displayOrder: integer("display_order").default(0).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  subtitleColor: varchar("subtitle_color").default('#FFFFFF'),
+  titleColor: varchar("title_color").default('#FFFFFF'),
+}, (table) => [
+  index("idx_hero_slides_tenant_id").on(table.tenantId),
 ]);
 
 // =====================================================
@@ -254,6 +308,8 @@ export const tenantsRelations = relations(tenants, ({ one, many }) => ({
   }),
   categories: many(categories),
   products: many(products),
+  orders: many(orders),
+  coupons: many(coupons),
 }));
 
 export const themesRelations = relations(themes, ({ one, many }) => ({
@@ -320,3 +376,61 @@ export const ordersRelations = relations(orders, ({ one }) => ({
     references: [products.id],
   }),
 }));
+
+export const couponsRelations = relations(coupons, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [coupons.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+// =====================================================
+// NOTIFICATIONS TABLE
+// =====================================================
+
+export const notifications = pgTable("notifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tenantId: uuid("tenant_id").notNull().references(() => tenants.id, { onDelete: "cascade" }),
+
+  // Notification source: 'system' (broadcast) or 'tenant' (specific)
+  source: varchar("source", { length: 20 }).notNull().default("tenant"),
+
+  // Notification content
+  type: varchar("type", { length: 50 }).notNull().default("info"), // order, success, warning, info, error
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }), // Icon name from lucide-react
+  image: text("image"), // Image URL for rich notifications
+
+  // Status
+  read: boolean("read").default(false).notNull(),
+  readAt: timestamp("read_at"),
+
+  // Optional link/action
+  actionUrl: text("action_url"),
+  actionLabel: varchar("action_label", { length: 100 }),
+
+  // Related entity (optional)
+  entityType: varchar("entity_type", { length: 50 }), // order, product, coupon, etc.
+  entityId: uuid("entity_id"),
+
+  // Metadata for additional data
+  metadata: jsonb("metadata").default({}),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at"), // Optional expiration
+}, (table) => [
+  index("idx_notifications_tenant").on(table.tenantId),
+  index("idx_notifications_tenant_read").on(table.tenantId, table.read),
+  index("idx_notifications_created").on(table.createdAt),
+  index("idx_notifications_source").on(table.source),
+]);
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [notifications.tenantId],
+    references: [tenants.id],
+  }),
+}));
+

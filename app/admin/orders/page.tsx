@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Search, Eye, X, Calendar, Clock, MapPin, Phone, User, FileText } from 'lucide-react';
+import { Search, Eye, X, Calendar, Clock, MapPin, Phone, User, FileText, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Order {
     id: string;
     customer_name: string;
     customer_phone: string;
-    date: string;
-    time: string;
-    area: string;
+    customer_email?: string;
+    date: string | null;
+    time: string | null;
+    area: string | null;
     total_amount: number;
     status: string;
     created_at: string;
@@ -18,10 +19,14 @@ interface Order {
     coupon_code?: string;
     discount?: number;
     selected_options?: any;
+    items?: any[];
     services?: {
         title: string;
         image: string;
-    };
+    } | null;
+    address?: string;
+    city?: string;
+    governorate?: string;
 }
 
 export default function OrdersPage() {
@@ -111,7 +116,7 @@ export default function OrdersPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8F6B43]"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF6500]"></div>
             </div>
         );
     }
@@ -130,7 +135,7 @@ export default function OrdersPage() {
                         placeholder="بحث برقم الطلب أو الاسم..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8F6B43] focus:border-transparent outline-none w-64"
+                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6500] focus:border-transparent outline-none w-64"
                     />
                     <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 </div>
@@ -171,16 +176,29 @@ export default function OrdersPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                            {order.services?.title || 'خدمة محذوفة'}
+                                            {order.items && order.items.length > 0 ? (
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">{order.items[0].name}</span>
+                                                    {order.items.length > 1 && (
+                                                        <span className="text-xs text-gray-500">+{order.items.length - 1} more items</span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                order.services?.title || 'خدمة محذوفة'
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                            <div className="flex flex-col">
-                                                <span>{order.date}</span>
-                                                <span className="text-xs text-gray-500">{order.time}</span>
-                                            </div>
+                                            {order.date ? (
+                                                <div className="flex flex-col">
+                                                    <span>{order.date}</span>
+                                                    <span className="text-xs text-gray-500">{order.time}</span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-xs text-gray-400">Store Order</span>
+                                            )}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-[#8F6B43]">
-                                            {order.total_amount} د.ك
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-[#FF6500]">
+                                            {order.total_amount} EGP
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <button
@@ -196,7 +214,7 @@ export default function OrdersPage() {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             <button
                                                 onClick={() => setSelectedOrder(order)}
-                                                className="text-gray-600 hover:text-[#8F6B43] transition-colors p-2 hover:bg-gray-100 rounded-full"
+                                                className="text-gray-600 hover:text-[#FF6500] transition-colors p-2 hover:bg-gray-100 rounded-full"
                                                 title="عرض التفاصيل"
                                             >
                                                 <Eye className="w-5 h-5" />
@@ -218,7 +236,7 @@ export default function OrdersPage() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                            className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
                         >
                             <div className="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
                                 <h2 className="text-xl font-bold text-gray-800">تفاصيل الطلب #{selectedOrder.id.slice(0, 8)}</h2>
@@ -238,80 +256,127 @@ export default function OrdersPage() {
                                 </div>
 
                                 {/* Customer Info */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-4 bg-gray-50 rounded-xl">
-                                        <div className="flex items-center gap-2 text-gray-500 mb-2">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="p-4 bg-gray-50 rounded-xl space-y-3">
+                                        <div className="flex items-center gap-2 text-gray-500 border-b border-gray-200 pb-2">
                                             <User className="w-4 h-4" />
-                                            <span className="text-xs font-bold uppercase">العميل</span>
+                                            <span className="text-xs font-bold uppercase">بيانات العميل</span>
                                         </div>
-                                        <p className="font-medium text-gray-900">{selectedOrder.customer_name}</p>
-                                        <p className="text-sm text-gray-600 mt-1" dir="ltr">{selectedOrder.customer_phone}</p>
-                                    </div>
-                                    <div className="p-4 bg-gray-50 rounded-xl">
-                                        <div className="flex items-center gap-2 text-gray-500 mb-2">
-                                            <MapPin className="w-4 h-4" />
-                                            <span className="text-xs font-bold uppercase">الموقع</span>
-                                        </div>
-                                        <p className="font-medium text-gray-900">{selectedOrder.area}</p>
-                                    </div>
-                                </div>
-
-                                {/* Appointment Info */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-4 bg-gray-50 rounded-xl">
-                                        <div className="flex items-center gap-2 text-gray-500 mb-2">
-                                            <Calendar className="w-4 h-4" />
-                                            <span className="text-xs font-bold uppercase">التاريخ</span>
-                                        </div>
-                                        <p className="font-medium text-gray-900">{selectedOrder.date}</p>
-                                    </div>
-                                    <div className="p-4 bg-gray-50 rounded-xl">
-                                        <div className="flex items-center gap-2 text-gray-500 mb-2">
-                                            <Clock className="w-4 h-4" />
-                                            <span className="text-xs font-bold uppercase">الوقت</span>
-                                        </div>
-                                        <p className="font-medium text-gray-900">{selectedOrder.time}</p>
-                                    </div>
-                                </div>
-
-                                {/* Service & Options */}
-                                <div className="border border-gray-200 rounded-xl p-4">
-                                    <h3 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">تفاصيل الخدمة</h3>
-                                    <div className="flex justify-between items-start mb-4">
                                         <div>
-                                            <p className="font-bold text-[#8F6B43]">{selectedOrder.services?.title}</p>
+                                            <p className="font-medium text-gray-900">{selectedOrder.customer_name}</p>
                                         </div>
-                                        <p className="font-bold">{selectedOrder.total_amount} د.ك</p>
+                                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                                            <Phone className="w-3 h-3" />
+                                            <span dir="ltr">{selectedOrder.customer_phone}</span>
+                                        </div>
+                                        {selectedOrder.customer_email && (
+                                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                <Mail className="w-3 h-3" />
+                                                <span>{selectedOrder.customer_email}</span>
+                                            </div>
+                                        )}
                                     </div>
+                                    <div className="p-4 bg-gray-50 rounded-xl space-y-3">
+                                        <div className="flex items-center gap-2 text-gray-500 border-b border-gray-200 pb-2">
+                                            <MapPin className="w-4 h-4" />
+                                            <span className="text-xs font-bold uppercase">بيانات التوصيل</span>
+                                        </div>
+                                        {selectedOrder.area ? (
+                                            <p className="font-medium text-gray-900">{selectedOrder.area}</p>
+                                        ) : (
+                                            <div className="flex flex-col text-sm space-y-1">
+                                                <span className="font-medium text-gray-900">{selectedOrder.address?.trim()}</span>
+                                                <span className="text-gray-600">
+                                                    {[selectedOrder.city, selectedOrder.governorate].filter(Boolean).join(', ')}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
 
-                                    {selectedOrder.selected_options && Object.keys(selectedOrder.selected_options).length > 0 && (
-                                        <div className="bg-gray-50 p-3 rounded-lg text-sm space-y-2">
-                                            {Object.entries(selectedOrder.selected_options).map(([key, value]: [string, any]) => (
-                                                <div key={key} className="flex justify-between">
-                                                    <span className="text-gray-600">
-                                                        {Array.isArray(value)
-                                                            ? value.map(v => v.label).join(', ')
-                                                            : value.label}
-                                                    </span>
-                                                    {(value.price || (Array.isArray(value) && value.reduce((a, b) => a + b.price, 0) > 0)) && (
-                                                        <span className="text-gray-900 font-medium">
-                                                            +{Array.isArray(value)
-                                                                ? value.reduce((a: number, b: any) => a + (b.price || 0), 0)
-                                                                : value.price} د.ك
-                                                        </span>
-                                                    )}
+                                {/* Appointment Info or Items List */}
+                                {selectedOrder.items && selectedOrder.items.length > 0 ? (
+                                    <div className="border border-gray-200 rounded-xl p-4">
+                                        <h3 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">المنتجات</h3>
+                                        <div className="space-y-4">
+                                            {selectedOrder.items.map((item: any, idx: number) => (
+                                                <div key={idx} className="flex justify-between items-center text-sm p-2 hover:bg-gray-50 rounded-lg">
+                                                    <div className="flex items-center gap-4">
+                                                        {item.image && (
+                                                            <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-gray-200" />
+                                                        )}
+                                                        <div>
+                                                            <p className="font-bold text-gray-900 text-base">{item.name}</p>
+                                                            <div className="flex items-center gap-3 mt-1">
+                                                                <span className="text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded text-xs">Size: {item.size}</span>
+                                                                <span className="text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded text-xs">Qty: {item.quantity}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <span className="font-bold text-gray-900 px-2">{Number(item.price) * Number(item.quantity)} EGP</span>
                                                 </div>
                                             ))}
                                         </div>
-                                    )}
-
-                                    {selectedOrder.coupon_code && (
-                                        <div className="mt-4 flex justify-between text-sm text-green-600 bg-green-50 p-2 rounded">
-                                            <span>كود الخصم: {selectedOrder.coupon_code}</span>
-                                            <span>-{selectedOrder.discount} د.ك</span>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="p-4 bg-gray-50 rounded-xl">
+                                            <div className="flex items-center gap-2 text-gray-500 mb-2">
+                                                <Calendar className="w-4 h-4" />
+                                                <span className="text-xs font-bold uppercase">التاريخ</span>
+                                            </div>
+                                            <p className="font-medium text-gray-900">{selectedOrder.date}</p>
                                         </div>
-                                    )}
-                                </div>
+                                        <div className="p-4 bg-gray-50 rounded-xl">
+                                            <div className="flex items-center gap-2 text-gray-500 mb-2">
+                                                <Clock className="w-4 h-4" />
+                                                <span className="text-xs font-bold uppercase">الوقت</span>
+                                            </div>
+                                            <p className="font-medium text-gray-900">{selectedOrder.time}</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Service Details (Only if services exist) */}
+                                {selectedOrder.services && (
+                                    <div className="border border-gray-200 rounded-xl p-4">
+                                        <h3 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">تفاصيل الخدمة</h3>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <p className="font-bold text-[#FF6500]">{selectedOrder.services?.title}</p>
+                                            </div>
+                                            <p className="font-bold">{selectedOrder.total_amount} EGP</p>
+                                        </div>
+
+                                        {selectedOrder.selected_options && Object.keys(selectedOrder.selected_options).length > 0 && (
+                                            <div className="bg-gray-50 p-3 rounded-lg text-sm space-y-2">
+                                                {Object.entries(selectedOrder.selected_options).map(([key, value]: [string, any]) => (
+                                                    <div key={key} className="flex justify-between">
+                                                        <span className="text-gray-600">
+                                                            {Array.isArray(value)
+                                                                ? value.map((v: any) => v.label).join(', ')
+                                                                : value.label}
+                                                        </span>
+                                                        {(value.price || (Array.isArray(value) && value.reduce((a: number, b: any) => a + b.price, 0) > 0)) && (
+                                                            <span className="text-gray-900 font-medium">
+                                                                +{Array.isArray(value)
+                                                                    ? value.reduce((a: number, b: any) => a + (b.price || 0), 0)
+                                                                    : value.price} EGP
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {selectedOrder.coupon_code && (
+                                            <div className="mt-4 flex justify-between text-sm text-green-600 bg-green-50 p-2 rounded">
+                                                <span>كود الخصم: {selectedOrder.coupon_code}</span>
+                                                <span>-{selectedOrder.discount} EGP</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
                                 {/* Notes */}
                                 {selectedOrder.notes && (

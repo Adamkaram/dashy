@@ -53,7 +53,7 @@ export default function FilterBar({ count, onSortChange, onFilterChange, onReset
                 {/* Reset Button */}
                 <button
                     onClick={handleReset}
-                    className="px-4 py-2 bg-[#A87C5F] text-white text-sm font-medium rounded-lg hover:bg-[#8F6B43] transition-colors"
+                    className="px-4 py-2 bg-[#FF9D23] text-white text-sm font-medium rounded-lg hover:bg-[#FF6500] transition-colors"
                 >
                     إعادة تعيين
                 </button>
@@ -62,10 +62,10 @@ export default function FilterBar({ count, onSortChange, onFilterChange, onReset
                 <div className="relative">
                     <button
                         onClick={() => setShowSortMenu(!showSortMenu)}
-                        className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E5E0D8] rounded-lg text-[#46423D] text-sm hover:border-[#A87C5F] transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E5E0D8] rounded-lg text-[#46423D] text-sm hover:border-[#FF9D23] transition-colors"
                     >
                         <span>{selectedSort}</span>
-                        <ChevronDown className={`w-4 h-4 text-[#A87C5F] transition-transform ${showSortMenu ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 text-[#FF9D23] transition-transform ${showSortMenu ? 'rotate-180' : ''}`} />
                     </button>
 
                     {showSortMenu && (
@@ -83,7 +83,7 @@ export default function FilterBar({ count, onSortChange, onFilterChange, onReset
                     )}
                 </div>
 
-                <span className="text-sm text-[#8F6B43] font-medium">ترتيب بواسطة</span>
+                <span className="text-sm text-[#FF6500] font-medium">ترتيب بواسطة</span>
 
                 {/* Filter Dropdown */}
                 <div className="relative">
@@ -92,7 +92,7 @@ export default function FilterBar({ count, onSortChange, onFilterChange, onReset
                         className="flex items-center gap-2 px-4 py-2 bg-[#EBE5DE] border border-transparent rounded-lg text-[#46423D] text-sm hover:bg-[#E0D8CF] transition-colors"
                     >
                         <span>{selectedFilter}</span>
-                        <ChevronDown className={`w-4 h-4 text-[#A87C5F] transition-transform ${showFilterMenu ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 text-[#FF9D23] transition-transform ${showFilterMenu ? 'rotate-180' : ''}`} />
                     </button>
 
                     {showFilterMenu && (
@@ -116,12 +116,12 @@ export default function FilterBar({ count, onSortChange, onFilterChange, onReset
                     )}
                 </div>
 
-                <span className="text-sm text-[#8F6B43] font-medium">فلتره بواسطة الشركات</span>
+                <span className="text-sm text-[#FF6500] font-medium">فلتره بواسطة الشركات</span>
             </div>
 
             {/* Left Side: Count */}
             <div className="flex items-center gap-1">
-                <span className="text-lg font-bold text-[#8F6B43]">{count}</span>
+                <span className="text-lg font-bold text-[#FF6500]">{count}</span>
                 <span className="text-sm text-[#46423D]">خدمات</span>
             </div>
         </div>

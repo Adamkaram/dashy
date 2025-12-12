@@ -88,18 +88,27 @@ export interface ThemeComponents {
     Error?: ComponentType<any>;
     NotFound?: ComponentType<any>;
     AddToCartNotification?: ComponentType<AddToCartNotificationProps>;
+    Toast?: ComponentType<{
+        type?: 'success' | 'error' | 'info' | 'warning';
+        title: string;
+        description?: string;
+        onDismiss?: () => void;
+    }>;
+    OrderSuccessToast?: ComponentType<{
+        orderId: string;
+        customerName: string;
+    }>;
 }
 
 export interface AddToCartNotificationProps {
     isOpen: boolean;
     onClose: () => void;
-    product: {
-        title: string;
-        image: string;
-        price: number;
-        size: string;
-        quantity: number;
-    };
+    title: string;
+    image: string;
+    price: number;
+    selectedOptions: Record<string, string>;
+    quantity: number;
+};
 }
 
 // =====================================================

@@ -13,7 +13,7 @@ export interface ProductCardProps {
     price?: string;
     originalPrice?: string;
     salePrice?: string;
-    badge?: string | null;
+
     discount?: string;
 }
 
@@ -25,21 +25,12 @@ export default function ProductCard({
     price,
     originalPrice,
     salePrice,
-    badge,
     discount
 }: ProductCardProps) {
     return (
         <Link href={`/products/${slug}`}>
             <Card className="group cursor-pointer overflow-hidden border-0 shadow-none bg-transparent transition-all hover:scale-[1.02]">
                 <div className="relative overflow-hidden mb-4 rounded-sm">
-                    {badge && (
-                        <Badge
-                            className={`absolute top-3 left-3 z-10 rounded-none px-3 py-1 text-xs font-semibold ${badge === 'Sale' ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-600 hover:bg-gray-700'
-                                }`}
-                        >
-                            {badge}
-                        </Badge>
-                    )}
                     <img
                         src={image}
                         alt={title}
