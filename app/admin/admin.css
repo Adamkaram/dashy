@@ -16,7 +16,7 @@
 
 /* === Brand Color Variables (Orange Theme) === */
 :root {
-    --font-family-ar: 'Ithra', 'Almarai', sans-serif;
+    --font-family-ar: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Ithra', 'Almarai', sans-serif;
 
     /* === Domain UI Design System Colors (Dark Theme) === */
     /* Slate Colors */

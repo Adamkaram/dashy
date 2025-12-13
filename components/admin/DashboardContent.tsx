@@ -92,48 +92,75 @@ export default function DashboardContent({ location, className }: DashboardConte
                     <div className="flex lg:grid lg:grid-cols-3 gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory lg:overflow-visible lg:pb-0">
                         {content.map((item, index) => {
                             const Icon = TYPE_ICONS[item.type]
+                            const hasImage = item.content?.image
                             return (
                                 <button
                                     key={item.id}
                                     onClick={() => setSelectedItem(item)}
                                     className={cn(
                                         "group relative flex-shrink-0 w-[280px] lg:w-auto snap-start",
-                                        "overflow-hidden rounded-xl bg-white p-4 text-left transition-all duration-300",
+                                        "overflow-hidden rounded-xl bg-white text-left transition-all duration-300",
                                         "border-2 border-transparent hover:border-[#FF6500]/20",
                                         "shadow-sm hover:shadow-xl hover:shadow-[#FF6500]/5",
-                                        "hover:-translate-y-1"
+                                        "hover:-translate-y-1",
+                                        hasImage ? "flex flex-col" : "p-4"
                                     )}
                                     style={{ animationDelay: `${index * 100}ms` }}
                                 >
-                                    {/* Background Glow */}
-                                    <div className={cn(
-                                        "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-                                        item.type === 'video' && "bg-gradient-to-br from-red-50/50 to-transparent",
-                                        item.type === 'article' && "bg-gradient-to-br from-blue-50/50 to-transparent",
-                                        item.type === 'tip' && "bg-gradient-to-br from-amber-50/50 to-transparent"
-                                    )} />
+                                    {/* Image Header (if available) */}
+                                    {hasImage && (
+                                        <div className="relative h-32 w-full overflow-hidden">
+                                            <img
+                                                src={item.content.image}
+                                                alt={item.title}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                            {/* Type Badge on Image */}
+                                            <div className={cn(
+                                                "absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase",
+                                                item.type === 'video' && "bg-red-500 text-white",
+                                                item.type === 'article' && "bg-blue-500 text-white",
+                                                item.type === 'tip' && "bg-amber-500 text-white"
+                                            )}>
+                                                {item.type}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Background Glow (no image) */}
+                                    {!hasImage && (
+                                        <div className={cn(
+                                            "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
+                                            item.type === 'video' && "bg-gradient-to-br from-red-50/50 to-transparent",
+                                            item.type === 'article' && "bg-gradient-to-br from-blue-50/50 to-transparent",
+                                            item.type === 'tip' && "bg-gradient-to-br from-amber-50/50 to-transparent"
+                                        )} />
+                                    )}
 
                                     {/* Content */}
-                                    <div className="relative">
+                                    <div className={cn("relative", hasImage ? "p-4" : "")}>
                                         {/* Icon & Title Row */}
                                         <div className="flex items-start gap-3 mb-3">
-                                            <div className={cn(
-                                                "relative shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
-                                                "group-hover:scale-110 group-hover:rotate-3",
-                                                item.type === 'video' && "bg-gradient-to-br from-red-500 to-red-600 shadow-lg shadow-red-500/30",
-                                                item.type === 'article' && "bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30",
-                                                item.type === 'tip' && "bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg shadow-amber-500/30"
-                                            )}>
-                                                {item.type === 'video' ? (
-                                                    <>
-                                                        <Play className="w-5 h-5 text-white fill-white" />
-                                                        <div className="absolute inset-0 rounded-xl animate-ping opacity-20 bg-white" />
-                                                    </>
-                                                ) : (
-                                                    <Icon className="w-5 h-5 text-white" />
-                                                )}
-                                            </div>
-                                            <div className="flex-1 min-w-0 pt-1">
+                                            {!hasImage && (
+                                                <div className={cn(
+                                                    "relative shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
+                                                    "group-hover:scale-110 group-hover:rotate-3",
+                                                    item.type === 'video' && "bg-gradient-to-br from-red-500 to-red-600 shadow-lg shadow-red-500/30",
+                                                    item.type === 'article' && "bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30",
+                                                    item.type === 'tip' && "bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg shadow-amber-500/30"
+                                                )}>
+                                                    {item.type === 'video' ? (
+                                                        <>
+                                                            <Play className="w-5 h-5 text-white fill-white" />
+                                                            <div className="absolute inset-0 rounded-xl animate-ping opacity-20 bg-white" />
+                                                        </>
+                                                    ) : (
+                                                        <Icon className="w-5 h-5 text-white" />
+                                                    )}
+                                                </div>
+                                            )}
+                                            <div className={cn("flex-1 min-w-0", !hasImage && "pt-1")}>
                                                 <h4 className="font-semibold text-neutral-900 text-sm line-clamp-2 group-hover:text-[#FF6500] transition-colors">
                                                     {item.title}
                                                 </h4>
@@ -201,20 +228,26 @@ export default function DashboardContent({ location, className }: DashboardConte
 
                             <div className="relative flex items-start justify-between gap-4">
                                 <div className="flex items-start gap-4">
-                                    {/* Icon */}
-                                    <div className={cn(
-                                        "shrink-0 w-14 h-14 rounded-xl flex items-center justify-center shadow-lg",
-                                        selectedItem.type === 'video' && "bg-gradient-to-br from-red-500 to-red-600 shadow-red-500/30",
-                                        selectedItem.type === 'article' && "bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/30",
-                                        selectedItem.type === 'tip' && "bg-gradient-to-br from-amber-500 to-amber-600 shadow-amber-500/30"
-                                    )}>
-                                        {(() => {
-                                            const Icon = TYPE_ICONS[selectedItem.type]
-                                            return selectedItem.type === 'video'
-                                                ? <Play className="w-6 h-6 text-white fill-white" />
-                                                : <Icon className="w-6 h-6 text-white" />
-                                        })()}
-                                    </div>
+                                    {/* Icon or Image */}
+                                    {selectedItem.content?.image ? (
+                                        <div className="shrink-0 w-14 h-14 rounded-xl overflow-hidden shadow-lg">
+                                            <img src={selectedItem.content.image} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                    ) : (
+                                        <div className={cn(
+                                            "shrink-0 w-14 h-14 rounded-xl flex items-center justify-center shadow-lg",
+                                            selectedItem.type === 'video' && "bg-gradient-to-br from-red-500 to-red-600 shadow-red-500/30",
+                                            selectedItem.type === 'article' && "bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/30",
+                                            selectedItem.type === 'tip' && "bg-gradient-to-br from-amber-500 to-amber-600 shadow-amber-500/30"
+                                        )}>
+                                            {(() => {
+                                                const Icon = TYPE_ICONS[selectedItem.type]
+                                                return selectedItem.type === 'video'
+                                                    ? <Play className="w-6 h-6 text-white fill-white" />
+                                                    : <Icon className="w-6 h-6 text-white" />
+                                            })()}
+                                        </div>
+                                    )}
                                     <div className="pt-1">
                                         <div className="flex items-center gap-2 mb-1">
                                             <span className={cn(

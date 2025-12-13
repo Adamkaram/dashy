@@ -1,11 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Video, FileText, Lightbulb, Trash2, Edit2, Eye, EyeOff, X, Save, Settings2, Database, Layout } from "lucide-react"
+import { Plus, Video, FileText, Lightbulb, Trash2, Edit2, Eye, EyeOff, X, Save, Settings2, Database, Layout, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { pageConfigs } from "@/lib/admin-page-config"
 
 interface DashboardContent {
     id: string
@@ -33,12 +34,17 @@ const CATEGORIES = [
     { value: 'orders', label: 'الطلبات', labelEn: 'Orders' }
 ]
 
-const LOCATIONS = [
-    { value: 'dashboard', label: 'الرئيسية', labelEn: 'Dashboard' },
-    { value: 'domains_page', label: 'صفحة النطاقات', labelEn: 'Domains Page' },
-    { value: 'products_page', label: 'صفحة المنتجات', labelEn: 'Products Page' },
-    { value: 'settings_page', label: 'صفحة الإعدادات', labelEn: 'Settings Page' }
-]
+// Generate LOCATIONS dynamically from pageConfigs
+const LOCATIONS = Object.entries(pageConfigs).map(([path, config]) => ({
+    value: path.replace('/admin', '').replace('/', '') || 'dashboard',
+    path: path,
+    label: config.titleAr,
+    labelEn: config.title
+})).map(loc => ({
+    ...loc,
+    // Convert path to location key (e.g., /admin/domains -> domains_page)
+    value: loc.value === '' ? 'dashboard' : `${loc.value}_page`
+}))
 
 function SettingSection({
     title,
@@ -639,6 +645,35 @@ export default function SettingsPage() {
                                     />
                                 </div>
                             )}
+
+                            {/* Image URL - For all content types */}
+                            <div>
+                                <label className="block text-xs font-medium text-neutral-600 mb-1.5 uppercase tracking-wide">
+                                    <div className="flex items-center gap-1.5">
+                                        <ImageIcon className="w-3.5 h-3.5" />
+                                        Image URL (Optional)
+                                    </div>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.content.image || ''}
+                                    onChange={e => setFormData(f => ({ ...f, content: { ...f.content, image: e.target.value } }))}
+                                    placeholder="https://example.com/image.jpg"
+                                    className="w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-lg outline-none focus:ring-2 focus:ring-[#FF6500]/20 focus:border-[#FF6500] text-sm transition-all"
+                                />
+                                {formData.content.image && (
+                                    <div className="mt-2 relative rounded-lg overflow-hidden border border-neutral-200 h-32">
+                                        <img
+                                            src={formData.content.image}
+                                            alt="Preview"
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).style.display = 'none'
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
 
                             {/* Category & Status - Custom Styled */}
                             <div className="grid grid-cols-2 gap-4">

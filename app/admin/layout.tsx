@@ -10,6 +10,7 @@ import { NotificationProvider, useNotification, Notification } from '@/contexts/
 import { ConfirmProvider } from '@/contexts/ConfirmContext';
 import { PageHeader } from '@/components/admin/PageHeader';
 import { getPageConfig } from '@/lib/admin-page-config';
+import DashboardContent from '@/components/admin/DashboardContent';
 import {
     LayoutDashboard,
     Package,
@@ -615,7 +616,16 @@ export default function AdminLayout({
                                         />
                                     ) : null;
                                 })()}
-                                <main className="p-6">{children}</main>
+                                <main className="p-6">
+                                    {children}
+                                    {/* Auto-inject Resources section based on current page */}
+                                    {(() => {
+                                        const locationKey = pathname === '/admin'
+                                            ? 'dashboard'
+                                            : pathname.replace('/admin/', '').split('/')[0] + '_page';
+                                        return <DashboardContent location={locationKey} className="mt-6" />;
+                                    })()}
+                                </main>
                             </div>
                         </div>
                     </div>

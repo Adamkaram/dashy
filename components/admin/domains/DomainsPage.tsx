@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button"
 import DomainSetup from "./DomainSetup"
 import DomainCard from "./DomainCard"
-import DashboardContent from "@/components/admin/DashboardContent"
 import { WildcardDomainBanner } from "./WildcardDomainBanner"
 import { DomainSearchBox } from "@/components/admin/SearchBox"
 import { toast } from "sonner"
@@ -315,9 +314,6 @@ export default function DomainsPage() {
                     </div>
                 </div>
             )}
-
-            {/* Resources Section */}
-            <DashboardContent location="domains_page" className="mt-4" />
         </div>
     )
 }
