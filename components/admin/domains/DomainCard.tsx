@@ -7,12 +7,17 @@ import {
     Globe, ChevronDown, MoreHorizontal, ExternalLink, Copy, Check,
     Trash2, Edit, QrCode, Archive, Settings, RefreshCw,
     Info, AlertCircle, CheckCircle2, Clock, Flag, CornerDownRight,
-    Pencil, X
+    Pencil, X, Store
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+
+interface StoreOption {
+    id: string
+    name: string
+}
 
 interface DomainCardProps {
     domain: {
@@ -24,16 +29,20 @@ interface DomainCardProps {
         verification_token?: string
         redirect_url?: string
         created_at?: string
+        store_id?: string
+        store_name?: string
     }
+    stores?: StoreOption[]
     onDelete?: () => void
     onVerify?: () => void
     onEdit?: (domain: string, redirectUrl: string) => void
     onSetPrimary?: () => void
+    onLinkToStore?: (storeId: string) => void
 }
 
 type RecordType = 'A' | 'CNAME'
 
-export default function DomainCard({ domain, onDelete, onVerify, onEdit, onSetPrimary }: DomainCardProps) {
+export default function DomainCard({ domain, stores, onDelete, onVerify, onEdit, onSetPrimary, onLinkToStore }: DomainCardProps) {
     const [showDetails, setShowDetails] = useState(false)
     const [openMenu, setOpenMenu] = useState(false)
     const [copied, setCopied] = useState<string | null>(null)
@@ -43,6 +52,7 @@ export default function DomainCard({ domain, onDelete, onVerify, onEdit, onSetPr
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [verifyState, setVerifyState] = useState<'idle' | 'verifying' | 'success' | 'failed'>('idle')
     const [groupHover, setGroupHover] = useState(false)
+    const [showStoreSelector, setShowStoreSelector] = useState(false)
     const menuRef = useRef<HTMLDivElement>(null)
     const buttonRef = useRef<HTMLButtonElement>(null)
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
@@ -242,6 +252,50 @@ export default function DomainCard({ domain, onDelete, onVerify, onEdit, onSetPr
                                     </span>
                                 )}
                             </div>
+
+                            {/* Store Association */}
+                            {stores && stores.length > 0 && (
+                                <div className="mt-1 flex items-center gap-1 text-xs relative">
+                                    <Store className="h-3 w-3 text-neutral-400" />
+                                    <button
+                                        onClick={() => setShowStoreSelector(!showStoreSelector)}
+                                        className={cn(
+                                            "flex items-center gap-1 px-1.5 py-0.5 rounded transition-colors",
+                                            domain.store_name
+                                                ? "text-[#FF6500] hover:bg-orange-50"
+                                                : "text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100"
+                                        )}
+                                    >
+                                        {domain.store_name || 'No store linked'}
+                                        <ChevronDown className={cn("h-3 w-3 transition-transform", showStoreSelector && "rotate-180")} />
+                                    </button>
+
+                                    {/* Store Dropdown */}
+                                    {showStoreSelector && (
+                                        <div className="absolute top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg z-20 min-w-[160px] py-1">
+                                            {stores.map((store) => (
+                                                <button
+                                                    key={store.id}
+                                                    onClick={() => {
+                                                        onLinkToStore?.(store.id)
+                                                        setShowStoreSelector(false)
+                                                    }}
+                                                    className={cn(
+                                                        "w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-neutral-50 transition-colors text-left",
+                                                        domain.store_id === store.id && "bg-orange-50 text-[#FF6500]"
+                                                    )}
+                                                >
+                                                    <Store className="h-3 w-3" />
+                                                    {store.name}
+                                                    {domain.store_id === store.id && (
+                                                        <Check className="h-3 w-3 ml-auto" />
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 

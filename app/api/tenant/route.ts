@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { themes } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 /**
  * GET /api/tenant
@@ -14,22 +12,42 @@ export async function GET(request: NextRequest) {
 
         console.log('Looking for tenant with hostname:', hostname);
 
+        // Fast path for localhost during development
+        if (hostname === 'localhost' || hostname.startsWith('localhost:')) {
+            console.log('Localhost detected, using default tenant');
+            return NextResponse.json({
+                id: '1c394a93-c200-4468-9e5f-958b859b415a',
+                name: 'ماى مومنت - الموقع الرئيسي',
+                slug: 'default',
+                domain: null,
+                subdomain: 'www',
+                activeTheme: 'default',
+                activeThemeConfig: null,
+                plan: null,
+                status: 'active',
+            });
+        }
+
         // Extract subdomain from hostname
-        // e.g., "tenant1.localhost" -> "tenant1"
         const parts = hostname.split('.');
         const subdomain = parts.length > 1 ? parts[0] : 'www';
 
-        // Try to find tenant by subdomain or use default
-        let tenant = await db.query.tenants.findFirst({
-            where: (tenants, { eq }) => eq(tenants.subdomain, subdomain)
-        });
+        // Try to find tenant by subdomain using supabaseAdmin
+        let { data: tenant, error } = await supabaseAdmin
+            .from('tenants')
+            .select('*')
+            .eq('subdomain', subdomain)
+            .single();
 
         // If no tenant found, get default tenant
-        if (!tenant) {
+        if (!tenant || error) {
             console.log('No tenant found for subdomain, using default');
-            tenant = await db.query.tenants.findFirst({
-                where: (tenants, { eq }) => eq(tenants.slug, 'default')
-            });
+            const result = await supabaseAdmin
+                .from('tenants')
+                .select('*')
+                .eq('slug', 'default')
+                .single();
+            tenant = result.data;
         }
 
         if (!tenant) {
@@ -43,12 +61,17 @@ export async function GET(request: NextRequest) {
         let activeThemeName = 'default';
         let activeThemeConfig = null;
 
-        if (tenant.activeThemeId) {
-            const activeTheme = await db.query.themes.findFirst({
-                where: (th, { eq }) => eq(th.id, tenant.activeThemeId!)
-            });
-            activeThemeName = activeTheme?.slug || 'default';
-            activeThemeConfig = activeTheme?.config || null;
+        if (tenant.active_theme_id) {
+            const { data: activeTheme } = await supabaseAdmin
+                .from('themes')
+                .select('*')
+                .eq('id', tenant.active_theme_id)
+                .single();
+
+            if (activeTheme) {
+                activeThemeName = activeTheme.slug || 'default';
+                activeThemeConfig = activeTheme.config || null;
+            }
         }
 
         // Return tenant data

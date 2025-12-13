@@ -1,12 +1,18 @@
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@/lib/db";
+import { Pool } from "pg";
 import { admin } from "better-auth/plugins";
 
+// Create a separate pool for auth to avoid prepared statement issues
+const authPool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    },
+    max: 5,
+});
+
 export const auth = betterAuth({
-    database: drizzleAdapter(db, {
-        provider: "pg", // or "mysql", "sqlite"
-    }),
+    database: authPool,
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: false, // Set to true in production

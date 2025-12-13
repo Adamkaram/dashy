@@ -1,17 +1,32 @@
 import { NextResponse } from 'next/server';
-import { query } from '@/lib/db';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 export async function GET() {
     try {
-        const sql = `
-            SELECT * FROM hero_slides 
-            WHERE is_active = true 
-            ORDER BY display_order ASC
-        `;
+        // Get default store for now
+        const { data: defaultStore } = await supabaseAdmin
+            .from('stores')
+            .select('id')
+            .eq('slug', 'default')
+            .single();
 
-        const result = await query(sql);
+        const storeId = defaultStore?.id;
 
-        return NextResponse.json(result.rows);
+        let query = supabaseAdmin
+            .from('hero_slides')
+            .select('*')
+            .eq('is_active', true)
+            .order('display_order', { ascending: true });
+
+        if (storeId) {
+            query = query.eq('store_id', storeId);
+        }
+
+        const { data, error } = await query;
+
+        if (error) throw error;
+
+        return NextResponse.json(data || []);
     } catch (error) {
         console.error('Error fetching hero slides:', error);
         return NextResponse.json(

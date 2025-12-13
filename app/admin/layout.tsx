@@ -11,6 +11,7 @@ import { ConfirmProvider } from '@/contexts/ConfirmContext';
 import { PageHeader } from '@/components/admin/PageHeader';
 import { getPageConfig } from '@/lib/admin-page-config';
 import DashboardContent from '@/components/admin/DashboardContent';
+import { StoreProvider, StoreSelector } from '@/components/admin/StoreSelector';
 import {
     LayoutDashboard,
     Package,
@@ -28,7 +29,8 @@ import {
     ShoppingCart,
     AlertCircle,
     CheckCircle,
-    Megaphone
+    Megaphone,
+    Store
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -43,6 +45,7 @@ const navigation = [
     { name: 'شرائح Hero', href: '/admin/hero-slides', icon: ImageIcon },
     { name: 'المظهر', href: '/admin/themes', icon: Palette },
     { name: 'النطاقات', href: '/admin/domains', icon: Globe },
+    { name: 'المتاجر', href: '/admin/stores', icon: Store },
     { name: 'الإعدادات', href: '/admin/settings', icon: Settings },
 ];
 
@@ -65,6 +68,7 @@ const navigationGroups = [
             { name: 'المظهر', href: '/admin/themes', icon: Palette },
             { name: 'شرائح Hero', href: '/admin/hero-slides', icon: ImageIcon },
             { name: 'النطاقات', href: '/admin/domains', icon: Globe },
+            { name: 'المتاجر', href: '/admin/stores', icon: Store },
             { name: 'الإعدادات', href: '/admin/settings', icon: Settings },
         ],
     },
@@ -557,80 +561,83 @@ export default function AdminLayout({
 
     return (
         <ConfirmProvider>
-            <NotificationProvider>
-                <div className="min-h-screen w-full bg-white" dir="rtl">
-                    <div className="min-h-screen md:grid md:grid-cols-[min-content_minmax(0,1fr)]">
-                        {/* Side nav backdrop */}
-                        <div
-                            className={cn(
-                                "fixed left-0 top-0 z-50 h-dvh w-screen transition-[background-color,backdrop-filter] md:sticky md:z-auto md:w-full md:bg-transparent",
-                                isMobileMenuOpen
-                                    ? "bg-black/20 backdrop-blur-sm"
-                                    : "bg-transparent max-md:pointer-events-none"
-                            )}
-                            onClick={(e) => {
-                                if (e.target === e.currentTarget) {
-                                    e.stopPropagation();
-                                    setIsMobileMenuOpen(false);
-                                }
-                            }}
-                        >
-                            {/* Side nav */}
+            <StoreProvider>
+                <NotificationProvider>
+                    <div className="min-h-screen w-full bg-white" dir="rtl">
+                        <div className="min-h-screen md:grid md:grid-cols-[min-content_minmax(0,1fr)]">
+                            {/* Side nav backdrop */}
                             <div
                                 className={cn(
-                                    "relative h-full w-min max-w-full bg-neutral-200 transition-transform md:translate-x-0",
-                                    !isMobileMenuOpen && "-translate-x-full"
+                                    "fixed left-0 top-0 z-50 h-dvh w-screen transition-[background-color,backdrop-filter] md:sticky md:z-auto md:w-full md:bg-transparent",
+                                    isMobileMenuOpen
+                                        ? "bg-black/20 backdrop-blur-sm"
+                                        : "bg-transparent max-md:pointer-events-none"
                                 )}
+                                onClick={(e) => {
+                                    if (e.target === e.currentTarget) {
+                                        e.stopPropagation();
+                                        setIsMobileMenuOpen(false);
+                                    }
+                                }}
                             >
-                                <Sidebar />
-                            </div>
-                        </div>
-
-                        {/* Main content */}
-                        <div className="bg-neutral-200 pb-[var(--page-bottom-margin)] pt-[var(--page-top-margin)] [--page-bottom-margin:0px] [--page-top-margin:0px] md:h-screen md:pb-2 md:pl-2 md:[--page-bottom-margin:0.5rem] md:[--page-top-margin:0.5rem] isolate z-0">
-                            <div className="relative h-full overflow-y-auto bg-neutral-100 pt-px md:rounded-xl md:bg-white">
-                                {/* Mobile header */}
-                                <div className="sticky top-0 z-10 flex h-16 items-center gap-x-4 border-b border-neutral-200 bg-white px-4 shadow-sm md:hidden">
-                                    <button
-                                        onClick={() => setIsMobileMenuOpen(true)}
-                                        className="md:hidden p-2 hover:bg-neutral-100 rounded-lg transition-colors"
-                                    >
-                                        <Menu className="h-6 w-6" />
-                                    </button>
-                                    <div className="flex-1 text-sm font-semibold leading-6 text-neutral-900">
-                                        لوحة التحكم - ماى مومنت
-                                    </div>
-                                    <NotificationBell />
+                                {/* Side nav */}
+                                <div
+                                    className={cn(
+                                        "relative h-full w-min max-w-full bg-neutral-200 transition-transform md:translate-x-0",
+                                        !isMobileMenuOpen && "-translate-x-full"
+                                    )}
+                                >
+                                    <Sidebar />
                                 </div>
+                            </div>
 
-                                {/* Page content */}
-                                {(() => {
-                                    const pageConfig = getPageConfig(pathname);
-                                    return pageConfig ? (
-                                        <PageHeader
-                                            title={pageConfig.titleAr}
-                                            titleInfo={{
-                                                title: pageConfig.descriptionAr || pageConfig.description,
-                                                href: pageConfig.href
-                                            }}
-                                        />
-                                    ) : null;
-                                })()}
-                                <main className="p-6">
-                                    {children}
-                                    {/* Auto-inject Resources section based on current page */}
+                            {/* Main content */}
+                            <div className="bg-neutral-200 pb-[var(--page-bottom-margin)] pt-[var(--page-top-margin)] [--page-bottom-margin:0px] [--page-top-margin:0px] md:h-screen md:pb-2 md:pl-2 md:[--page-bottom-margin:0.5rem] md:[--page-top-margin:0.5rem] isolate z-0">
+                                <div className="relative h-full overflow-y-auto bg-neutral-100 pt-px md:rounded-xl md:bg-white">
+                                    {/* Mobile header */}
+                                    <div className="sticky top-0 z-10 flex h-16 items-center gap-x-4 border-b border-neutral-200 bg-white px-4 shadow-sm md:hidden">
+                                        <button
+                                            onClick={() => setIsMobileMenuOpen(true)}
+                                            className="md:hidden p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+                                        >
+                                            <Menu className="h-6 w-6" />
+                                        </button>
+                                        <div className="flex-1 text-sm font-semibold leading-6 text-neutral-900">
+                                            لوحة التحكم - ماى مومنت
+                                        </div>
+                                        <StoreSelector />
+                                        <NotificationBell />
+                                    </div>
+
+                                    {/* Page content */}
                                     {(() => {
-                                        const locationKey = pathname === '/admin'
-                                            ? 'dashboard'
-                                            : pathname.replace('/admin/', '').split('/')[0] + '_page';
-                                        return <DashboardContent location={locationKey} className="mt-6" />;
+                                        const pageConfig = getPageConfig(pathname);
+                                        return pageConfig ? (
+                                            <PageHeader
+                                                title={pageConfig.titleAr}
+                                                titleInfo={{
+                                                    title: pageConfig.descriptionAr || pageConfig.description,
+                                                    href: pageConfig.href
+                                                }}
+                                            />
+                                        ) : null;
                                     })()}
-                                </main>
+                                    <main className="p-6">
+                                        {children}
+                                        {/* Auto-inject Resources section based on current page */}
+                                        {(() => {
+                                            const locationKey = pathname === '/admin'
+                                                ? 'dashboard'
+                                                : pathname.replace('/admin/', '').split('/')[0] + '_page';
+                                            return <DashboardContent location={locationKey} className="mt-6" />;
+                                        })()}
+                                    </main>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </NotificationProvider>
-        </ConfirmProvider>
+                </NotificationProvider>
+            </StoreProvider>
+        </ConfirmProvider >
     );
 }

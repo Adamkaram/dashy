@@ -59,5 +59,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*', '/((?!api|_next/static|_next/image|favicon.ico).*)'],
+    // Only run middleware on admin routes
+    matcher: ['/admin/:path*'],
 };

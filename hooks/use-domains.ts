@@ -14,6 +14,8 @@ export interface Domain {
     archived?: boolean
     redirect_url?: string
     clicks?: number
+    store_id?: string
+    store_name?: string
     created_at: string
     updated_at: string
     verified_at?: string
@@ -173,12 +175,28 @@ export function useDomainActions() {
         return res.json()
     }
 
+    const linkToStore = async (id: string, storeId: string) => {
+        const res = await fetch(`/api/admin/domains/${id}/store`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ store_id: storeId }),
+        })
+
+        if (!res.ok) {
+            throw new Error('Failed to link domain to store')
+        }
+
+        await mutate()
+        return res.json()
+    }
+
     return {
         createDomain,
         deleteDomain,
         verifyDomain,
         setPrimaryDomain,
         updateDomain,
+        linkToStore,
     }
 }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, CSSProperties, ReactNode } from "react"
+import { useState, useMemo, useEffect, CSSProperties, ReactNode } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     Plus, Globe, ExternalLink, CheckCircle2, AlertTriangle, Clock,
@@ -100,7 +100,16 @@ export default function DomainsPage() {
 
     // Use SWR hooks for data fetching
     const { domains: allDomains, loading, mutate } = useDomains()
-    const { deleteDomain, verifyDomain, updateDomain, setPrimaryDomain } = useDomainActions()
+    const { deleteDomain, verifyDomain, updateDomain, setPrimaryDomain, linkToStore } = useDomainActions()
+
+    // Fetch stores for linking
+    const [stores, setStores] = useState<{ id: string; name: string }[]>([])
+    useEffect(() => {
+        fetch('/api/admin/stores')
+            .then(res => res.json())
+            .then(data => setStores(Array.isArray(data) ? data.map((s: any) => ({ id: s.id, name: s.name })) : []))
+            .catch(() => setStores([]))
+    }, [])
 
     // Map domains to include status field
     const domains = useMemo(() =>
@@ -150,6 +159,15 @@ export default function DomainsPage() {
             toast.success('تم تحديث النطاق')
         } catch (error) {
             toast.error('فشل في تحديث النطاق')
+        }
+    }
+
+    const handleLinkToStore = async (domainId: string, storeId: string) => {
+        try {
+            await linkToStore(domainId, storeId)
+            toast.success('تم ربط النطاق بالمتجر')
+        } catch (error) {
+            toast.error('فشل في ربط النطاق بالمتجر')
         }
     }
 
@@ -291,10 +309,12 @@ export default function DomainsPage() {
                                 >
                                     <DomainCard
                                         domain={domain}
+                                        stores={stores}
                                         onDelete={() => handleDelete(domain)}
                                         onVerify={() => handleVerify(domain)}
                                         onEdit={(newDomain, redirectUrl) => handleEdit(domain.id, newDomain, redirectUrl)}
                                         onSetPrimary={() => handleSetPrimary(domain)}
+                                        onLinkToStore={(storeId) => handleLinkToStore(domain.id, storeId)}
                                     />
                                 </motion.li>
                             ))}

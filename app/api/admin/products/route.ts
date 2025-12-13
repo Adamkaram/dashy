@@ -1,48 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { products, tenants } from '@/db/schema';
-import { desc } from 'drizzle-orm';
-import { supabaseAdmin as supabase } from '@/lib/supabase-admin'; // Keep for POST for now or migrate later
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-// GET all services (products)
+// GET all products
 export async function GET() {
     try {
-        console.log('Fetching products with Drizzle...');
-        const data = await db.query.products.findMany({
-            with: {
-                category: true,
-                images: true
-            },
-            orderBy: [desc(products.createdAt)]
-        });
+        console.log('Fetching products with supabaseAdmin...');
 
-        // Map to snake_case for frontend compatibility
-        const mappedData = data.map(product => ({
-            ...product,
-            category_id: product.categoryId,
-            base_price: product.basePrice,
-            is_active: product.isActive,
-            metadata: product.metadata,
-            created_at: product.createdAt,
-            updated_at: product.updatedAt,
-        }));
+        const { data, error } = await supabaseAdmin
+            .from('products')
+            .select(`
+                *,
+                category:categories(*),
+                images:product_images(*)
+            `)
+            .order('created_at', { ascending: false });
 
-        console.log(`Fetched ${data.length} products`);
-        return NextResponse.json(mappedData);
+        if (error) throw error;
+
+        console.log(`Fetched ${data?.length || 0} products`);
+        return NextResponse.json(data || []);
     } catch (error: any) {
-        console.error('Error fetching products (Drizzle):', error);
+        console.error('Error fetching products:', error);
         return NextResponse.json(
-            { error: error.message || 'فشل في جلب الخدمات', details: error },
+            { error: error.message || 'فشل في جلب المنتجات' },
             { status: 500 }
         );
     }
 }
 
-// POST create new service (product)
+// POST create new product
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { slug, category_id, title, image, description, base_price, images, metadata } = body;
+        const { slug, category_id, title, image, description, base_price, images, metadata, store_id } = body;
 
         if (!slug || !category_id || !title) {
             return NextResponse.json(
@@ -51,27 +41,33 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Get default tenant ID
-        const defaultTenant = await db.query.tenants.findFirst({
-            where: (tenants, { eq }) => eq(tenants.slug, 'default')
-        });
+        // Get store_id from body or default store
+        let finalStoreId = store_id;
+        if (!finalStoreId) {
+            const { data: defaultStore } = await supabaseAdmin
+                .from('stores')
+                .select('id')
+                .eq('slug', 'default')
+                .single();
+            finalStoreId = defaultStore?.id;
+        }
 
-        if (!defaultTenant) {
+        if (!finalStoreId) {
             return NextResponse.json(
-                { error: 'لم يتم العثور على tenant افتراضي' },
+                { error: 'لم يتم العثور على متجر' },
                 { status: 500 }
             );
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('products')
             .insert([
                 {
-                    tenant_id: defaultTenant.id,
+                    store_id: finalStoreId,
                     slug,
                     category_id,
                     title,
-                    image: images && images.length > 0 ? images[0] : image, // Use first image as main
+                    image: images && images.length > 0 ? images[0] : image,
                     description,
                     base_price: base_price || 0,
                     sale_price: body.sale_price || 0,
@@ -87,13 +83,12 @@ export async function POST(request: NextRequest) {
         // Save images to product_images table
         if (images && Array.isArray(images) && images.length > 0) {
             const imageRecords = images.map((imageUrl: string, index: number) => ({
-                tenant_id: defaultTenant.id,
                 product_id: data.id,
                 image_url: imageUrl,
                 display_order: index,
             }));
 
-            const { error: imagesError } = await supabase
+            const { error: imagesError } = await supabaseAdmin
                 .from('product_images')
                 .insert(imageRecords);
 
@@ -106,7 +101,7 @@ export async function POST(request: NextRequest) {
     } catch (error: any) {
         console.error('Error creating product:', error);
         return NextResponse.json(
-            { error: error.message || 'فشل في إنشاء الخدمة' },
+            { error: error.message || 'فشل في إنشاء المنتج' },
             { status: 500 }
         );
     }

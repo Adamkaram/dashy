@@ -80,6 +80,13 @@ export const pageConfigs: Record<string, PageConfig> = {
         descriptionAr: 'تكوين إعدادات وتفضيلات المتجر.',
         href: 'https://docs.panaroid.com/settings'
     },
+    '/admin/stores': {
+        title: 'Stores',
+        titleAr: 'المتاجر',
+        description: 'Manage your stores under this tenant.',
+        descriptionAr: 'إدارة متاجرك تحت هذا الحساب.',
+        href: 'https://docs.panaroid.com/stores'
+    },
 }
 
 // Helper function to get page config

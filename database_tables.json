@@ -1,0 +1,448 @@
+[
+    {
+        "schema": "public",
+        "name": "account",
+        "rls_enabled": false,
+        "rows": 1,
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable"
+                ]
+            },
+            {
+                "name": "account_id",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable"
+                ]
+            },
+            {
+                "name": "provider_id",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable"
+                ]
+            },
+            {
+                "name": "user_id",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable"
+                ]
+            },
+            {
+                "name": "access_token",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "refresh_token",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "id_token",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "access_token_expires_at",
+                "data_type": "timestamp without time zone",
+                "format": "timestamp",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "refresh_token_expires_at",
+                "data_type": "timestamp without time zone",
+                "format": "timestamp",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "scope",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "password",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "created_at",
+                "data_type": "timestamp without time zone",
+                "format": "timestamp",
+                "options": [
+                    "updatable"
+                ],
+                "default_value": "now()"
+            },
+            {
+                "name": "updated_at",
+                "data_type": "timestamp without time zone",
+                "format": "timestamp",
+                "options": [
+                    "updatable"
+                ]
+            }
+        ],
+        "primary_keys": [
+            "id"
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "account_user_id_user_id_fk",
+                "source": "public.account.user_id",
+                "target": "public.user.id"
+            }
+        ]
+    },
+    {
+        "schema": "public",
+        "name": "categories",
+        "rls_enabled": false,
+        "rows": 10,
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "uuid",
+                "format": "uuid",
+                "options": [
+                    "updatable"
+                ],
+                "default_value": "gen_random_uuid()"
+            },
+            {
+                "name": "tenant_id",
+                "data_type": "uuid",
+                "format": "uuid",
+                "options": [
+                    "updatable"
+                ]
+            },
+            {
+                "name": "parent_id",
+                "data_type": "uuid",
+                "format": "uuid",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "name",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable"
+                ]
+            },
+            {
+                "name": "slug",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable",
+                    "unique"
+                ]
+            },
+            {
+                "name": "description",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "image",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "is_active",
+                "data_type": "boolean",
+                "format": "bool",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "true"
+            },
+            {
+                "name": "created_at",
+                "data_type": "timestamp with time zone",
+                "format": "timestamptz",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "now()"
+            },
+            {
+                "name": "updated_at",
+                "data_type": "timestamp with time zone",
+                "format": "timestamptz",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "now()"
+            }
+        ],
+        "primary_keys": [
+            "id"
+        ]
+    },
+    {
+        "schema": "public",
+        "name": "domains",
+        "rls_enabled": false,
+        "rows": 5,
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable"
+                ],
+                "default_value": "concat('dom_', gen_random_uuid())"
+            },
+            {
+                "name": "domain",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable",
+                    "unique"
+                ]
+            },
+            {
+                "name": "status",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "'pending'::text",
+                "check": "status = ANY (ARRAY['pending'::text, 'active'::text, 'inactive'::text, 'error'::text])"
+            },
+            {
+                "name": "added_at",
+                "data_type": "timestamp with time zone",
+                "format": "timestamptz",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "now()"
+            },
+            {
+                "name": "dns_configured",
+                "data_type": "boolean",
+                "format": "bool",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "false"
+            },
+            {
+                "name": "ssl_issued",
+                "data_type": "boolean",
+                "format": "bool",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "false"
+            },
+            {
+                "name": "created_at",
+                "data_type": "timestamp with time zone",
+                "format": "timestamptz",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "now()"
+            },
+            {
+                "name": "updated_at",
+                "data_type": "timestamp with time zone",
+                "format": "timestamptz",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "now()"
+            },
+            {
+                "name": "verified_at",
+                "data_type": "timestamp with time zone",
+                "format": "timestamptz",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            }
+        ],
+        "primary_keys": [
+            "id"
+        ]
+    },
+    {
+        "schema": "public",
+        "name": "dashboard_content",
+        "rls_enabled": true,
+        "rows": 5,
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "uuid",
+                "format": "uuid",
+                "options": [
+                    "updatable"
+                ],
+                "default_value": "gen_random_uuid()"
+            },
+            {
+                "name": "type",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable"
+                ],
+                "check": "type = ANY (ARRAY['video'::text, 'article'::text, 'tip'::text])"
+            },
+            {
+                "name": "title",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "updatable"
+                ]
+            },
+            {
+                "name": "description",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ]
+            },
+            {
+                "name": "content",
+                "data_type": "jsonb",
+                "format": "jsonb",
+                "options": [
+                    "updatable"
+                ],
+                "default_value": "'{}'::jsonb"
+            },
+            {
+                "name": "category",
+                "data_type": "text",
+                "format": "text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "'general'::text"
+            },
+            {
+                "name": "display_location",
+                "data_type": "ARRAY",
+                "format": "_text",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "ARRAY['dashboard'::text]"
+            },
+            {
+                "name": "is_active",
+                "data_type": "boolean",
+                "format": "bool",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "true"
+            },
+            {
+                "name": "display_order",
+                "data_type": "integer",
+                "format": "int4",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "0"
+            },
+            {
+                "name": "created_at",
+                "data_type": "timestamp with time zone",
+                "format": "timestamptz",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "now()"
+            },
+            {
+                "name": "updated_at",
+                "data_type": "timestamp with time zone",
+                "format": "timestamptz",
+                "options": [
+                    "nullable",
+                    "updatable"
+                ],
+                "default_value": "now()"
+            }
+        ],
+        "primary_keys": [
+            "id"
+        ]
+    }
+]
