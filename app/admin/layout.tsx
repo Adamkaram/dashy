@@ -8,6 +8,8 @@ import './admin.css'; // Admin-specific styles
 import Link from 'next/link';
 import { NotificationProvider, useNotification, Notification } from '@/contexts/NotificationContext';
 import { ConfirmProvider } from '@/contexts/ConfirmContext';
+import { PageHeader } from '@/components/admin/PageHeader';
+import { getPageConfig } from '@/lib/admin-page-config';
 import {
     LayoutDashboard,
     Package,
@@ -601,6 +603,18 @@ export default function AdminLayout({
                                 </div>
 
                                 {/* Page content */}
+                                {(() => {
+                                    const pageConfig = getPageConfig(pathname);
+                                    return pageConfig ? (
+                                        <PageHeader
+                                            title={pageConfig.titleAr}
+                                            titleInfo={{
+                                                title: pageConfig.descriptionAr || pageConfig.description,
+                                                href: pageConfig.href
+                                            }}
+                                        />
+                                    ) : null;
+                                })()}
                                 <main className="p-6">{children}</main>
                             </div>
                         </div>

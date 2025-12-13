@@ -3,13 +3,15 @@
 import { useState, useMemo, CSSProperties, ReactNode } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-    Search, Plus, Globe, ExternalLink, CheckCircle2, AlertTriangle, Clock,
+    Plus, Globe, ExternalLink, CheckCircle2, AlertTriangle, Clock,
     MoreHorizontal, Trash2, RefreshCw, Copy, ArrowUpRight, MousePointer2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import DomainSetup from "./DomainSetup"
 import DomainCard from "./DomainCard"
+import DashboardContent from "@/components/admin/DashboardContent"
+import { WildcardDomainBanner } from "./WildcardDomainBanner"
+import { DomainSearchBox } from "@/components/admin/SearchBox"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useDomains, useDomainActions, type Domain } from "@/hooks/use-domains"
@@ -178,21 +180,16 @@ export default function DomainsPage() {
     }
 
     return (
-        <div className="grid gap-5 p-6">
+        <div dir="ltr" className="grid gap-5">
             {/* Header */}
             <div className="flex flex-wrap justify-between gap-6">
-                {/* Search */}
-                <div className="w-full sm:w-auto">
-                    <div className="relative max-w-sm">
-                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                        <Input
-                            placeholder="البحث عن نطاق..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pr-10 bg-white border-neutral-200 h-9 rounded-lg"
-                        />
-                    </div>
-                </div>
+                {/* Search Box - Dub Style */}
+                <DomainSearchBox
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                    loading={loading}
+                    placeholder="Search domains..."
+                />
 
                 {/* Filters & Add Button */}
                 <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
@@ -228,6 +225,12 @@ export default function DomainsPage() {
                     </Button>
                 </div>
             </div>
+
+            {/* Wildcard Domain Banner */}
+            <WildcardDomainBanner
+                onLearnMore={() => window.open('https://docs.panaroid.com/wildcard-domains', '_blank')}
+                onClaim={() => setShowAddDomain(true)}
+            />
 
             {/* Content */}
             <div className="animate-fade-in">
@@ -312,6 +315,9 @@ export default function DomainsPage() {
                     </div>
                 </div>
             )}
+
+            {/* Resources Section */}
+            <DashboardContent location="domains_page" className="mt-4" />
         </div>
     )
 }

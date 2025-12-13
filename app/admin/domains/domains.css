@@ -25,6 +25,38 @@
     }
 }
 
+/* Dub-style slide-up-fade animation for dropdowns */
+@keyframes slide-up-fade {
+    from {
+        opacity: 0;
+        transform: translateY(2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-up-fade {
+    animation: slide-up-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dub-style card hover effect - only on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+    .hover\:drop-shadow-card-hover:hover {
+        --tw-drop-shadow: drop-shadow(0 8px 12px #222A350d) drop-shadow(0 32px 80px #2f30370f);
+        filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+    }
+}
+
+/* Smooth filter transition for card hover */
+.transition-\[filter\] {
+    transition-property: filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 0.15s;
+}
+
 /* Steps gradient for domain setup (RTL - right side) */
 .steps-gradient {
     background: linear-gradient(180deg,

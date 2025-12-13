@@ -51,6 +51,9 @@ export default {
                     '5': 'hsl(var(--chart-5))'
                 }
             },
+            dropShadow: {
+                "card-hover": ["0 8px 12px #222A350d", "0 32px 80px #2f30370f"],
+            },
         },
         borderRadius: {
             lg: 'var(--radius)',
